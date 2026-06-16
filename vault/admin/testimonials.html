@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Testimonials — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+    <style>
+        .table-row { grid-template-columns: 60px 1fr 1fr 80px 100px 120px; }
+        .table-row.selected { background: rgba(1, 161, 209, 0.1); }
+        .testimonial-avatar { width:40px;height:40px;border-radius:50%;background:#444;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;flex-shrink:0; }
+        .testimonial-info h4 { margin:0;font-size:16px;font-weight:600;color:#fff; }
+        .testimonial-info p { margin:4px 0 0;font-size:13px;color:#888; }
+        .rating { display:flex;align-items:center;gap:4px;color:#ffc107; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cog"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-cog"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Testimonials</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="breadcrumb">
+                <span>Testimonials</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa fa-quote-left"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalTestimonials">0</h3>
+                        <p>Total Testimonials</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #2ecc71;">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeTestimonials">0</h3>
+                        <p>Active Testimonials</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e74c3c;">
+                        <i class="fa fa-ban"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inactiveTestimonials">0</h3>
+                        <p>Inactive Testimonials</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bulk-actions">
+                <button class="bulk-btn" onclick="selectAll()"><i class="fa fa-check-square"></i> Select All</button>
+                <button class="bulk-btn" onclick="bulkActivate()"><i class="fa fa-toggle-on"></i> Activate Selected</button>
+                <button class="bulk-btn" onclick="bulkDeactivate()"><i class="fa fa-toggle-off"></i> Deactivate Selected</button>
+                <button class="bulk-btn" onclick="bulkDelete()" style="color: #e74c3c;"><i class="fa fa-trash"></i> Delete Selected</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search testimonials..." onkeyup="filterTestimonials()">
+                <i class="fa fa-search"></i>
+            </div>
+
+            <div class="table">
+                <div class="table-header">
+                    <h3>Testimonials</h3>
+                    <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus" style="margin-right:8px;"></i>Add Testimonial</button>
+                </div>
+                <div class="table-body" id="testimonialsTable">
+                    <!-- Table content will be loaded here -->
+                    <div class="empty-state">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        <p>Loading testimonials...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Add/Edit Testimonial Modal -->
+    <div class="modal" id="testimonialModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add Testimonial</h3>
+                <button class="modal-close" onclick="closeModal('testimonialModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonialName">Name</label>
+                        <input type="text" id="testimonialName" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialPosition">Position</label>
+                        <input type="text" id="testimonialPosition" placeholder="Enter position">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonialCompany">Company</label>
+                        <input type="text" id="testimonialCompany" placeholder="Enter company">
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialRating">Rating</label>
+                        <select id="testimonialRating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="testimonialContent">Content</label>
+                    <textarea id="testimonialContent" rows="4" placeholder="Enter testimonial content"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="testimonialImage">Image URL</label>
+                        <input type="text" id="testimonialImage" placeholder="Enter image URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="testimonialStatus">Status</label>
+                        <select id="testimonialStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="testimonialSEO">SEO Title (optional)</label>
+                    <input type="text" id="testimonialSEO" placeholder="Enter SEO title">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('testimonialModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveTestimonial()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Testimonial</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this testimonial? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn-danger" onclick="confirmDeleteTestimonial()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('collapsed');
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('active');
+    }
+});
+
+let allTestimonials = [];
+let selectedTestimonials = new Set();
+let currentEditId = null;
+
+async function loadTestimonials() {
+    try {
+        const data = await adminApi.getTestimonials();
+        allTestimonials = data.testimonials || [];
+        updateStats();
+        renderTable();
+    } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        document.getElementById('testimonialsTable').innerHTML = `
+            <div class="empty-state">
+                <i class="fa fa-exclamation-triangle" style="font-size:24px;margin-bottom:8px;"></i>
+                <p>Failed to load testimonials. Please try again.</p>
+            </div>
+        `;
+    }
+}
+
+function updateStats() {
+    const total = allTestimonials.length;
+    const active = allTestimonials.filter(t => t.status === 'active').length;
+    const inactive = total - active;
+
+    document.getElementById('totalTestimonials').textContent = total;
+    document.getElementById('activeTestimonials').textContent = active;
+    document.getElementById('inactiveTestimonials').textContent = inactive;
+}
+
+function renderTable() {
+    const table = document.getElementById('testimonialsTable');
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+    const filtered = allTestimonials.filter(testimonial => {
+        const matchesSearch = 
+            testimonial.name.toLowerCase().includes(searchTerm) ||
+            testimonial.content.toLowerCase().includes(searchTerm) ||
+            (testimonial.company && testimonial.company.toLowerCase().includes(searchTerm));
+        return matchesSearch;
+    });
+
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <div class="empty-state">
+                <i class="fa fa-quote-left" style="font-size:48px;margin-bottom:16px;"></i>
+                <p>No testimonials found</p>
+            </div>
+        `;
+        return;
+    }
+
+    table.innerHTML = filtered.map(testimonial => {
+        const initials = testimonial.name.charAt(0).toUpperCase();
+        const ratingStars = '★'.repeat(testimonial.rating) + '☆'.repeat(5 - testimonial.rating);
+
+        return `
+            <div class="table-row" onclick="toggleSelection('${testimonial.id}')" style="cursor:pointer;">
+                <div>
+                    <input type="checkbox" onchange="toggleSelection('${testimonial.id}')" style="cursor:pointer;" ${selectedTestimonials.has(testimonial.id) ? 'checked' : ''}>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="testimonial-avatar">${initials}</div>
+                    <div class="testimonial-info">
+                        <h4>${testimonial.name}</h4>
+                        <p>${testimonial.position || ''}${testimonial.position && testimonial.company ? ' at ' : ''}${testimonial.company || ''}</p>
+                    </div>
+                </div>
+                <div class="rating" title="Rating: ${testimonial.rating} stars">
+                    ${'★'.repeat(testimonial.rating)}
+                </div>
+                <div class="status ${testimonial.status}">${testimonial.status}</div>
+                <div class="actions">
+                    <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${testimonial.id}')" title="Edit">
+                        <i class="fa fa-edit" style="font-size:12px;"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteTestimonial('${testimonial.id}')" title="Delete">
+                        <i class="fa fa-trash" style="font-size:12px;"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleSelection(id) {
+    if (selectedTestimonials.has(id)) {
+        selectedTestimonials.delete(id);
+    } else {
+        selectedTestimonials.add(id);
+    }
+    renderTable();
+}
+
+function selectAll() {
+    if (selectedTestimonials.size === allTestimonials.length) {
+        selectedTestimonials.clear();
+    } else {
+        allTestimonials.forEach(t => selectedTestimonials.add(t.id));
+    }
+    renderTable();
+}
+
+async function bulkActivate() {
+    if (selectedTestimonials.size === 0) return;
+
+    try {
+        const testimonials = Array.from(selectedTestimonials);
+        await adminApi.bulkUpdateTestimonials({ testimonials });
+        closeModal('deleteModal');
+        selectedTestimonials.clear();
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to activate testimonials:', error);
+        alert('Failed to activate testimonials. Please try again.');
+    }
+}
+
+async function bulkDeactivate() {
+    if (selectedTestimonials.size === 0) return;
+
+    try {
+        const testimonials = Array.from(selectedTestimonials);
+        const updated = testimonials.map(id => ({
+            _id: id,
+            updateOne: { update: { $set: { status: 'inactive' } }, filter: { _id: id } }
+        }));
+        await adminApi.bulkUpdateTestimonials({ testimonials: updated });
+        closeModal('deleteModal');
+        selectedTestimonials.clear();
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to deactivate testimonials:', error);
+        alert('Failed to deactivate testimonials. Please try again.');
+    }
+}
+
+async function bulkDelete() {
+    if (selectedTestimonials.size === 0) return;
+
+    if (!confirm('Are you sure you want to delete these testimonials? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        const testimonials = Array.from(selectedTestimonials);
+        for (const id of testimonials) {
+            await adminApi.deleteTestimonial(id);
+        }
+        closeModal('deleteModal');
+        selectedTestimonials.clear();
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to delete testimonials:', error);
+        alert('Failed to delete testimonials. Please try again.');
+    }
+}
+
+function filterTestimonials() {
+    renderTable();
+}
+
+function openAddModal() {
+    currentEditId = null;
+    document.getElementById('modalTitle').textContent = 'Add Testimonial';
+    document.getElementById('testimonialName').value = '';
+    document.getElementById('testimonialPosition').value = '';
+    document.getElementById('testimonialCompany').value = '';
+    document.getElementById('testimonialContent').value = '';
+    document.getElementById('testimonialRating').value = '5';
+    document.getElementById('testimonialImage').value = '';
+    document.getElementById('testimonialStatus').value = 'active';
+    document.getElementById('testimonialSEO').value = '';
+    openModal('testimonialModal');
+}
+
+async function openEditModal(id) {
+    try {
+        const testimonial = await adminApi.getTestimonial(id);
+        currentEditId = id;
+
+        document.getElementById('modalTitle').textContent = 'Edit Testimonial';
+        document.getElementById('testimonialName').value = testimonial.name || '';
+        document.getElementById('testimonialPosition').value = testimonial.position || '';
+        document.getElementById('testimonialCompany').value = testimonial.company || '';
+        document.getElementById('testimonialContent').value = testimonial.content || '';
+        document.getElementById('testimonialRating').value = testimonial.rating || 5;
+        document.getElementById('testimonialImage').value = testimonial.image || '';
+        document.getElementById('testimonialStatus').value = testimonial.status || 'active';
+        document.getElementById('testimonialSEO').value = testimonial.seo || '';
+        openModal('testimonialModal');
+    } catch (error) {
+        console.error('Failed to load testimonial:', error);
+        alert('Failed to load testimonial details. Please try again.');
+    }
+}
+
+async function saveTestimonial() {
+    const testimonialData = {
+        name: document.getElementById('testimonialName').value,
+        position: document.getElementById('testimonialPosition').value,
+        company: document.getElementById('testimonialCompany').value,
+        content: document.getElementById('testimonialContent').value,
+        rating: parseInt(document.getElementById('testimonialRating').value),
+        image: document.getElementById('testimonialImage').value,
+        status: document.getElementById('testimonialStatus').value,
+        seo: document.getElementById('testimonialSEO').value
+    };
+
+    if (!testimonialData.name || !testimonialData.content) {
+        alert('Name and content are required');
+        return;
+    }
+
+    try {
+        if (currentEditId) {
+            await adminApi.updateTestimonial(currentEditId, testimonialData);
+        } else {
+            await adminApi.createTestimonial(testimonialData);
+        }
+        closeModal('testimonialModal');
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to save testimonial:', error);
+        alert('Failed to save testimonial. Please try again.');
+    }
+}
+
+async function deleteTestimonial(id) {
+    if (!confirm('Are you sure you want to delete this testimonial? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        await adminApi.deleteTestimonial(id);
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to delete testimonial:', error);
+        alert('Failed to delete testimonial. Please try again.');
+    }
+}
+
+async function confirmDeleteTestimonial() {
+    if (!currentEditId) return;
+
+    try {
+        await adminApi.deleteTestimonial(currentEditId);
+        closeModal('deleteModal');
+        currentEditId = null;
+        loadTestimonials();
+    } catch (error) {
+        console.error('Failed to delete testimonial:', error);
+        alert('Failed to delete testimonial. Please try again.');
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadTestimonials();
+});
+</script>
+</body>
+</html>

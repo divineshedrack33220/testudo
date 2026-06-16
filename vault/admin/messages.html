@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Messages — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html" class="active"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Messages</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="dashboard.html">Dashboard</a> / <span>Messages</span>
+            </div>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="card-icon cyan"><i class="fa fa-envelope"></i></div>
+                    <div class="card-value" id="statTotal">0</div>
+                    <div class="card-label">Total Messages</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon orange"><i class="fa fa-clock"></i></div>
+                    <div class="card-value" id="statUnread">0</div>
+                    <div class="card-label">Unread</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon cyan"><i class="fa fa-check"></i></div>
+                    <div class="card-value" id="statReplied">0</div>
+                    <div class="card-label">Replied</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Messages</h3>
+                    <div style="display:flex;gap:8px;">
+                        <select id="msgFilter" onchange="loadMessages()" style="background:#1a1a1a;border:1px solid #333;color:#ccc;padding:6px 12px;border-radius:6px;font-size:12px;">
+                            <option value="">All Messages</option>
+                            <option value="unread">Unread</option>
+                            <option value="read">Read</option>
+                            <option value="replied">Replied</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="messagesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Message Modal -->
+    <div class="modal-overlay" id="viewMsgModal">
+        <div class="modal-box" style="width:560px;">
+            <div class="modal-header">
+                <h3 id="viewMsgName">Message</h3>
+                <button class="modal-close" onclick="closeModal('viewMsgModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <div>
+                        <div style="color:#fff;font-size:14px;font-weight:600;"><span id="viewMsgLabel" style="color:#01a1d1;">From:</span> <span id="viewMsgFrom"></span></div>
+                        <div style="color:#888;font-size:12px;margin-top:4px;"><span id="viewMsgEmail"></span></div>
+                    </div>
+                    <div style="color:#555;font-size:12px;" id="viewMsgTime"></div>
+                </div>
+                <div style="background:#111;padding:16px;border-radius:8px;border-left:3px solid #01a1d1;">
+                    <div style="font-size:12px;color:#888;margin-bottom:8px;">Message:</div>
+                    <div id="viewMsgBody" style="font-size:14px;color:#ccc;line-height:1.7;white-space:pre-wrap;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-sm delete" id="viewMsgDeleteBtn">Delete</button>
+                <button class="btn-primary" id="viewMsgReplyBtn">Reply</button>
+                <button class="btn-cancel" onclick="closeModal('viewMsgModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="replyToName">Reply to Message</h3>
+                <button class="modal-close" onclick="closeModal('replyModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background:#111;padding:12px 16px;border-radius:8px;margin-bottom:16px;border-left:3px solid #01a1d1;">
+                    <div style="font-size:12px;color:#888;margin-bottom:4px;">Original message:</div>
+                    <div id="replyOriginalMsg" style="font-size:13px;color:#ccc;"></div>
+                </div>
+                <label for="replyMessage">Your Reply</label>
+                <textarea id="replyMessage" style="min-height:120px;" placeholder="Type your reply here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('replyModal')">Cancel</button>
+                <button class="btn-primary" onclick="sendReply()">Send Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Message Modal -->
+    <div class="modal-overlay" id="deleteMsgModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Delete Message</h3>
+                <button class="modal-close" onclick="closeModal('deleteMsgModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this message? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteMsgModal')">Cancel</button>
+                <button class="btn-danger" onclick="deleteMessage()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<style>
+.msg-unread { background: rgba(1, 161, 209, 0.04); border-left: 3px solid #01a1d1; }
+.msg-unread .msg-name { color: #fff !important; }
+</style>
+<script>
+var currentMessageId = null;
+var allMessages = [];
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+
+function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    var d = new Date(dateStr);
+    var now = new Date();
+    var diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 2592000) return Math.floor(diff / 86400) + 'd ago';
+    return d.toLocaleDateString();
+}
+
+async function loadMessages() {
+    try {
+        var filter = document.getElementById('msgFilter').value;
+        var params = filter ? { status: filter } : {};
+        var data = await adminApi.getMessages(params);
+        var msgs = data.messages || [];
+        allMessages = msgs;
+        var total = data.total || 0;
+        var unread = data.unreadCount || 0;
+        document.getElementById('statTotal').textContent = total;
+        document.getElementById('statUnread').textContent = unread;
+        document.getElementById('statReplied').textContent = total - unread;
+
+        var container = document.getElementById('messagesList');
+        if (msgs.length === 0) {
+            container.innerHTML = '<div style="padding:40px;text-align:center;color:#555;">No messages found.</div>';
+            return;
+        }
+        container.innerHTML = '';
+        msgs.forEach(function(m) {
+            var initials = (m.name || '?').charAt(0).toUpperCase();
+            var item = document.createElement('div');
+            item.className = 'msg-item' + (m.status === 'unread' ? ' msg-unread' : '');
+            item.onclick = function() { viewMessage(m.id); };
+            var preview = (m.message || '').substring(0, 120);
+            if (m.message && m.message.length > 120) preview += '...';
+            item.innerHTML = '<div class="msg-avatar">' + initials + '</div>' +
+                '<div class="msg-content">' +
+                '<div class="msg-name">' + escapeHtml(m.name) + (m.status === 'unread' ? ' <span style="color:#01a1d1;font-size:11px;">NEW</span>' : '') + '</div>' +
+                '<div class="msg-text">' + escapeHtml(preview) + '</div>' +
+                '</div>' +
+                '<div class="msg-time">' + timeAgo(m.createdAt) + '</div>' +
+                '<div class="msg-actions" style="display:flex;gap:6px;margin-left:12px;">' +
+                '<button class="btn-sm edit" onclick="event.stopPropagation();replyTo(' + m.id + ')">Reply</button>' +
+                '<button class="btn-sm delete" onclick="event.stopPropagation();confirmDelete(' + m.id + ')">Delete</button>' +
+                '</div>';
+            container.appendChild(item);
+        });
+    } catch (e) {
+        document.getElementById('messagesList').innerHTML = '<div style="padding:40px;text-align:center;color:#e74c3c;">Failed to load messages.</div>';
+        console.warn('Failed to load messages', e);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function viewMessage(id) {
+    currentMessageId = id;
+    try {
+        var data = await adminApi.getMessage(id);
+        var m = data.message || data;
+        if (m.status === 'unread') {
+            await adminApi.updateMessage(id, { status: 'read' });
+            loadMessages();
+        }
+        document.getElementById('viewMsgName').textContent = 'Message from ' + m.name;
+        document.getElementById('viewMsgLabel').textContent = 'From:';
+        document.getElementById('viewMsgFrom').textContent = m.name;
+        document.getElementById('viewMsgEmail').textContent = m.email + (m.company ? ' — ' + m.company : '') + (m.phone ? ' — ' + m.phone : '');
+        document.getElementById('viewMsgTime').textContent = timeAgo(m.createdAt);
+        document.getElementById('viewMsgBody').textContent = m.message || '';
+        document.getElementById('viewMsgReplyBtn').onclick = function() { closeModal('viewMsgModal'); replyTo(id); };
+        document.getElementById('viewMsgDeleteBtn').onclick = function() { closeModal('viewMsgModal'); confirmDelete(id); };
+        openModal('viewMsgModal');
+    } catch (e) {
+        showToast('Error', 'Could not load message.', 'error');
+    }
+}
+
+function replyTo(id) {
+    currentMessageId = id;
+    var m = allMessages.find(function(x) { return x.id === id; }) || {};
+    document.getElementById('replyToName').textContent = 'Reply to ' + (m.name || '');
+    document.getElementById('replyOriginalMsg').textContent = (m.message || '').substring(0, 200);
+    document.getElementById('replyMessage').value = '';
+    openModal('replyModal');
+}
+
+async function sendReply() {
+    var btn = document.querySelector('#replyModal .btn-primary');
+    var replyText = document.getElementById('replyMessage').value.trim();
+    if (!replyText) { showToast('Missing Reply', 'Please enter a reply message.', 'warning'); return; }
+    if (!currentMessageId) return;
+    setLoading(btn, true, 'Sending...');
+    try {
+        await adminApi.updateMessage(currentMessageId, { replyText: replyText, status: 'replied' });
+        closeModal('replyModal');
+        showToast('Reply Sent', 'Your reply has been sent successfully.', 'success');
+        loadMessages();
+    } catch (e) {
+        showToast('Send Failed', e.message || 'Could not send reply.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+function confirmDelete(id) {
+    currentMessageId = id;
+    openModal('deleteMsgModal');
+}
+
+async function deleteMessage() {
+    if (!currentMessageId) return;
+    var btn = document.querySelector('#deleteMsgModal .btn-danger');
+    setLoading(btn, true, 'Deleting...');
+    try {
+        await adminApi.deleteMessage(currentMessageId);
+        closeModal('deleteMsgModal');
+        showToast('Message Deleted', 'The message has been deleted.', 'error');
+        loadMessages();
+    } catch (e) {
+        showToast('Delete Failed', e.message || 'Could not delete message.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+document.addEventListener('DOMContentLoaded', loadMessages);
+</script>
+
+</body>
+</html>

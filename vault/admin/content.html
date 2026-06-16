@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Content — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+    <style>
+        #tab-testimonials .table-row { grid-template-columns: 60px 1fr 1fr 80px 100px 120px; }
+        #tab-partners .table-row { grid-template-columns: 60px 1fr 120px 120px 100px; }
+        #tab-faqs .table-row { grid-template-columns: 60px 1fr 120px 120px 100px; }
+        .testimonial-avatar { width:40px;height:40px;border-radius:50%;background:#444;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;flex-shrink:0; }
+        .testimonial-info h4 { margin:0;font-size:14px;font-weight:600;color:#fff; }
+        .testimonial-info p { margin:2px 0 0;font-size:12px;color:#888; }
+        .testimonial-info small { font-size:11px;color:#666; }
+        .partner-logo { width:40px;height:40px;border-radius:8px;background:#444;display:flex;align-items:center;justify-content:center;font-weight:600;color:#fff;overflow:hidden;flex-shrink:0; }
+        .partner-logo img { width:100%;height:100%;object-fit:cover; }
+        .partner-info h4 { margin:0;font-size:14px;font-weight:600;color:#fff; }
+        .partner-info p { margin:2px 0 0;font-size:12px;color:#888; }
+        .faq-icon { width:36px;height:36px;border-radius:50%;background:rgba(1,161,209,0.15);color:#01a1d1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0; }
+        .faq-info h4 { margin:0;font-size:14px;font-weight:600;color:#fff; }
+        .faq-info p { margin:2px 0 0;font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+        .rating-stars { color:#ffc107;font-size:12px; }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html" class="active"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Content</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <span>Content</span>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('testimonials')" id="tabBtn-testimonials"><i class="fa fa-quote-right" style="margin-right:8px;"></i>Testimonials</button>
+                <button class="tab" onclick="switchTab('partners')" id="tabBtn-partners"><i class="fa fa-handshake" style="margin-right:8px;"></i>Partners</button>
+                <button class="tab" onclick="switchTab('faqs')" id="tabBtn-faqs"><i class="fa fa-question-circle" style="margin-right:8px;"></i>FAQs</button>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa fa-database"></i></div>
+                    <div class="stat-info"><h3 id="statTotal">0</h3><p>Total</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#2ecc71;"><i class="fa fa-check"></i></div>
+                    <div class="stat-info"><h3 id="statActive">0</h3><p>Active</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#e74c3c;"><i class="fa fa-ban"></i></div>
+                    <div class="stat-info"><h3 id="statInactive">0</h3><p>Inactive</p></div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions">
+                <button class="bulk-btn" onclick="selectAll()"><i class="fa fa-check-square"></i> Select All</button>
+                <button class="bulk-btn" onclick="bulkActivate()"><i class="fa fa-toggle-on"></i> Activate Selected</button>
+                <button class="bulk-btn" onclick="bulkDeactivate()"><i class="fa fa-toggle-off"></i> Deactivate Selected</button>
+                <button class="bulk-btn" onclick="bulkDelete()" style="color:#e74c3c;"><i class="fa fa-trash"></i> Delete Selected</button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search..." onkeyup="renderTable()">
+                <i class="fa fa-search"></i>
+            </div>
+
+            <!-- Testimonials Table -->
+            <div id="tab-testimonials" class="tab-content active">
+                <div class="table">
+                    <div class="table-header">
+                        <h3>Testimonials</h3>
+                        <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus" style="margin-right:8px;"></i>Add Testimonial</button>
+                    </div>
+                    <div class="table-body" id="testimonialsTable">
+                        <div class="empty-state"><i class="fa fa-spinner fa-spin"></i><p>Loading...</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partners Table -->
+            <div id="tab-partners" class="tab-content">
+                <div class="table">
+                    <div class="table-header">
+                        <h3>Partners</h3>
+                        <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus" style="margin-right:8px;"></i>Add Partner</button>
+                    </div>
+                    <div class="table-body" id="partnersTable">
+                        <div class="empty-state"><i class="fa fa-spinner fa-spin"></i><p>Loading...</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs Table -->
+            <div id="tab-faqs" class="tab-content">
+                <div class="table">
+                    <div class="table-header">
+                        <h3>FAQs</h3>
+                        <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus" style="margin-right:8px;"></i>Add FAQ</button>
+                    </div>
+                    <div class="table-body" id="faqsTable">
+                        <div class="empty-state"><i class="fa fa-spinner fa-spin"></i><p>Loading...</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonial Modal -->
+    <div class="modal" id="testimonialModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="testimonialModalTitle">Add Testimonial</h3>
+                <button class="modal-close" onclick="closeModal('testimonialModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tmName">Name</label>
+                        <input type="text" id="tmName" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="tmPosition">Position</label>
+                        <input type="text" id="tmPosition" placeholder="Enter position">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tmCompany">Company</label>
+                        <input type="text" id="tmCompany" placeholder="Enter company">
+                    </div>
+                    <div class="form-group">
+                        <label for="tmRating">Rating</label>
+                        <select id="tmRating">
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="tmContent">Content</label>
+                    <textarea id="tmContent" rows="4" placeholder="Enter testimonial content"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tmImage">Image URL</label>
+                        <input type="text" id="tmImage" placeholder="Enter image URL">
+                    </div>
+                    <div class="form-group">
+                        <label for="tmStatus">Status</label>
+                        <select id="tmStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('testimonialModal')">Cancel</button>
+                <button class="btn-primary" id="saveTestimonialBtn" onclick="saveTestimonial()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Modal -->
+    <div class="modal" id="partnerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="partnerModalTitle">Add Partner</h3>
+                <button class="modal-close" onclick="closeModal('partnerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="pnName">Name</label>
+                        <input type="text" id="pnName" placeholder="Enter company name">
+                    </div>
+                    <div class="form-group">
+                        <label for="pnOrder">Order</label>
+                        <input type="number" id="pnOrder" placeholder="Order" value="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="pnUrl">Website URL</label>
+                    <input type="text" id="pnUrl" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="pnLogo">Logo URL</label>
+                    <input type="text" id="pnLogo" placeholder="img/partners/logo.svg">
+                </div>
+                <div class="form-group">
+                    <label for="pnStatus">Status</label>
+                    <select id="pnStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('partnerModal')">Cancel</button>
+                <button class="btn-primary" id="savePartnerBtn" onclick="savePartner()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div class="modal" id="faqModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="faqModalTitle">Add FAQ</h3>
+                <button class="modal-close" onclick="closeModal('faqModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fqQuestion">Question</label>
+                        <input type="text" id="fqQuestion" placeholder="Enter question">
+                    </div>
+                    <div class="form-group">
+                        <label for="fqCategory">Category</label>
+                        <input type="text" id="fqCategory" placeholder="Enter category">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="fqAnswer">Answer</label>
+                    <textarea id="fqAnswer" rows="4" placeholder="Enter answer"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fqStatus">Status</label>
+                        <select id="fqStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fqOrder">Order</label>
+                        <input type="number" id="fqOrder" placeholder="Order" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('faqModal')">Cancel</button>
+                <button class="btn-primary" id="saveFAQBtn" onclick="saveFAQ()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this item? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+var activeTab = 'testimonials';
+var data = { testimonials: [], partners: [], faqs: [] };
+var selected = { testimonials: [], partners: [], faqs: [] };
+var currentEditId = { testimonials: null, partners: null, faqs: null };
+var pendingDeleteId = null;
+
+function toggleSidebar() {
+    var s = document.querySelector('.sidebar');
+    if (window.innerWidth <= 768) { s.classList.toggle('mobile-open'); }
+    else { s.classList.toggle('collapsed'); }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) { e.target.classList.remove('active'); }
+});
+
+function switchTab(tab) {
+    activeTab = tab;
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('tabBtn-' + tab).classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(function(tc) { tc.classList.remove('active'); });
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('searchInput').value = '';
+    loadData();
+}
+
+function getLabel() {
+    var labels = { testimonials: 'Testimonial', partners: 'Partner', faqs: 'FAQ' };
+    return labels[activeTab] || 'Item';
+}
+
+async function loadData() {
+    var tableId = activeTab + 'sTable';
+    var el = document.getElementById(tableId);
+    el.innerHTML = '<div class="empty-state"><i class="fa fa-spinner fa-spin"></i><p>Loading...</p></div>';
+    try {
+        var apiCalls = { testimonials: 'getTestimonials', partners: 'getPartners', faqs: 'getFAQs' };
+        var result = await adminApi[apiCalls[activeTab]]();
+        var keys = { testimonials: 'testimonials', partners: 'partners', faqs: 'faqs' };
+        data[activeTab] = result[keys[activeTab]] || [];
+        updateStats();
+        renderTable();
+    } catch (e) {
+        el.innerHTML = '<div class="empty-state"><i class="fa fa-exclamation-triangle" style="color:#e74c3c;"></i><p>Failed to load. Is the API running?</p></div>';
+    }
+}
+
+function updateStats() {
+    var d = data[activeTab];
+    document.getElementById('statTotal').textContent = d.length;
+    document.getElementById('statActive').textContent = d.filter(function(x) { return x.status === 'active'; }).length;
+    document.getElementById('statInactive').textContent = d.filter(function(x) { return x.status !== 'active'; }).length;
+}
+
+function renderTable() {
+    var tableId = activeTab + 'sTable';
+    var el = document.getElementById(tableId);
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var items = data[activeTab].filter(function(x) {
+        var name = x.name || x.question || '';
+        var extra = x.content || x.answer || x.url || '';
+        return name.toLowerCase().includes(search) || extra.toLowerCase().includes(search);
+    });
+    if (items.length === 0) {
+        el.innerHTML = '<div class="empty-state"><i class="fa fa-' + (activeTab === 'testimonials' ? 'quote-right' : activeTab === 'partners' ? 'handshake' : 'question-circle') + '"></i><p>No ' + getLabel() + 's found</p></div>';
+        return;
+    }
+    var fns = { testimonials: renderTestimonialRow, partners: renderPartnerRow, faqs: renderFAQRow };
+    el.innerHTML = items.map(fns[activeTab]).join('');
+}
+
+function isSelected(id) { return selected[activeTab].indexOf(id) !== -1; }
+
+function toggleSelection(id) {
+    var idx = selected[activeTab].indexOf(id);
+    if (idx === -1) { selected[activeTab].push(id); }
+    else { selected[activeTab].splice(idx, 1); }
+    renderTable();
+}
+
+function selectAll() {
+    var d = data[activeTab];
+    if (selected[activeTab].length === d.length) { selected[activeTab] = []; }
+    else { selected[activeTab] = d.map(function(x) { return x.id || x._id; }).filter(Boolean); }
+    renderTable();
+}
+
+// ---- Testimonial Row ----
+function renderTestimonialRow(t) {
+    var id = t.id || t._id || '';
+    var stars = '';
+    for (var i = 0; i < (t.rating || 5); i++) { stars += '<i class="fa fa-star"></i>'; }
+    var initial = (t.name || '?').charAt(0).toUpperCase();
+    return '<div class="table-row' + (isSelected(id) ? ' selected' : '') + '" onclick="toggleSelection(\'' + id + '\')">' +
+        '<div><input type="checkbox" ' + (isSelected(id) ? 'checked' : '') + ' onchange="toggleSelection(\'' + id + '\')" onclick="event.stopPropagation()"></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;"><div class="testimonial-avatar">' + initial + '</div><div class="testimonial-info"><h4>' + esc(t.name) + '</h4><p>' + esc(t.position || '') + (t.company ? ' &middot; ' + esc(t.company) : '') + '</p><small>' + esc((t.content || '').substring(0, 80)) + '</small></div></div>' +
+        '<div class="rating-stars">' + stars + '</div>' +
+        '<div class="status ' + (t.status || 'active') + '">' + (t.status || 'active') + '</div>' +
+        '<div class="actions"><button class="btn-icon btn-edit" onclick="event.stopPropagation();openEditModal(\'' + id + '\')" title="Edit"><i class="fa fa-edit"></i></button><button class="btn-icon btn-delete" onclick="event.stopPropagation();confirmDeleteItem(\'' + id + '\')" title="Delete"><i class="fa fa-trash"></i></button></div>' +
+        '</div>';
+}
+
+// ---- Partner Row ----
+function renderPartnerRow(p) {
+    var id = p.id || p._id || '';
+    var logoHtml = p.logo ? '<img src="' + esc(p.logo) + '" alt="">' : (p.name || '?').charAt(0).toUpperCase();
+    return '<div class="table-row' + (isSelected(id) ? ' selected' : '') + '" onclick="toggleSelection(\'' + id + '\')">' +
+        '<div><input type="checkbox" ' + (isSelected(id) ? 'checked' : '') + ' onchange="toggleSelection(\'' + id + '\')" onclick="event.stopPropagation()"></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;"><div class="partner-logo">' + logoHtml + '</div><div class="partner-info"><h4>' + esc(p.name) + '</h4><p>' + (p.website ? esc(p.website) : '') + '</p></div></div>' +
+        '<div>' + (p.order || 0) + '</div>' +
+        '<div class="status ' + (p.status || 'active') + '">' + (p.status || 'active') + '</div>' +
+        '<div class="actions"><button class="btn-icon btn-edit" onclick="event.stopPropagation();openEditModal(\'' + id + '\')" title="Edit"><i class="fa fa-edit"></i></button><button class="btn-icon btn-delete" onclick="event.stopPropagation();confirmDeleteItem(\'' + id + '\')" title="Delete"><i class="fa fa-trash"></i></button></div>' +
+        '</div>';
+}
+
+// ---- FAQ Row ----
+function renderFAQRow(f) {
+    var id = f.id || f._id || '';
+    var initial = (f.question || '?').charAt(0).toUpperCase();
+    return '<div class="table-row' + (isSelected(id) ? ' selected' : '') + '" onclick="toggleSelection(\'' + id + '\')">' +
+        '<div><input type="checkbox" ' + (isSelected(id) ? 'checked' : '') + ' onchange="toggleSelection(\'' + id + '\')" onclick="event.stopPropagation()"></div>' +
+        '<div style="display:flex;align-items:center;gap:12px;"><div class="faq-icon">' + initial + '</div><div class="faq-info"><h4>' + esc(f.question) + '</h4><p>' + esc((f.answer || '').substring(0, 100)) + '</p></div></div>' +
+        '<div class="status ' + (f.status || 'active') + '">' + (f.status || 'active') + '</div>' +
+        '<div class="actions"><button class="btn-icon btn-edit" onclick="event.stopPropagation();openEditModal(\'' + id + '\')" title="Edit"><i class="fa fa-edit"></i></button><button class="btn-icon btn-delete" onclick="event.stopPropagation();confirmDeleteItem(\'' + id + '\')" title="Delete"><i class="fa fa-trash"></i></button></div>' +
+        '</div>';
+}
+
+function esc(s) { return (s + '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ---- Add/Edit ----
+function openAddModal() {
+    currentEditId[activeTab] = null;
+    var titles = { testimonials: 'testimonialModalTitle', partners: 'partnerModalTitle', faqs: 'faqModalTitle' };
+    var btns = { testimonials: 'saveTestimonialBtn', partners: 'savePartnerBtn', faqs: 'saveFAQBtn' };
+    document.getElementById(titles[activeTab]).textContent = 'Add ' + getLabel();
+    document.getElementById(btns[activeTab]).textContent = 'Save';
+    clearForm();
+    var modalIds = { testimonials: 'testimonialModal', partners: 'partnerModal', faqs: 'faqModal' };
+    openModal(modalIds[activeTab]);
+}
+
+function openEditModal(id) {
+    currentEditId[activeTab] = id;
+    var titles = { testimonials: 'testimonialModalTitle', partners: 'partnerModalTitle', faqs: 'faqModalTitle' };
+    var btns = { testimonials: 'saveTestimonialBtn', partners: 'savePartnerBtn', faqs: 'saveFAQBtn' };
+    document.getElementById(titles[activeTab]).textContent = 'Edit ' + getLabel();
+    document.getElementById(btns[activeTab]).textContent = 'Save Changes';
+    var items = data[activeTab];
+    var item = null;
+    for (var i = 0; i < items.length; i++) {
+        if ((items[i].id || items[i]._id) === id) { item = items[i]; break; }
+    }
+    if (item) { populateForm(item); }
+    var modalIds = { testimonials: 'testimonialModal', partners: 'partnerModal', faqs: 'faqModal' };
+    openModal(modalIds[activeTab]);
+}
+
+function clearForm() {
+    if (activeTab === 'testimonials') {
+        ['tmName','tmPosition','tmCompany','tmContent','tmImage','tmSEO'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) { el.value = ''; }
+        });
+        document.getElementById('tmRating').value = '5';
+        document.getElementById('tmStatus').value = 'active';
+    } else if (activeTab === 'partners') {
+        ['pnName','pnUrl','pnLogo'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) { el.value = ''; }
+        });
+        document.getElementById('pnOrder').value = '0';
+        document.getElementById('pnStatus').value = 'active';
+    } else {
+        ['fqQuestion','fqAnswer','fqCategory'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) { el.value = ''; }
+        });
+        document.getElementById('fqOrder').value = '0';
+        document.getElementById('fqStatus').value = 'active';
+    }
+}
+
+function populateForm(item) {
+    if (activeTab === 'testimonials') {
+        setVal('tmName', item.name);
+        setVal('tmPosition', item.position);
+        setVal('tmCompany', item.company);
+        setVal('tmContent', item.content);
+        setVal('tmImage', item.image);
+        setVal('tmRating', item.rating || 5);
+        setVal('tmStatus', item.status || 'active');
+    } else if (activeTab === 'partners') {
+        setVal('pnName', item.name);
+        setVal('pnUrl', item.website);
+        setVal('pnLogo', item.logo);
+        setVal('pnOrder', item.order || 0);
+        setVal('pnStatus', item.status || 'active');
+    } else {
+        setVal('fqQuestion', item.question);
+        setVal('fqAnswer', item.answer);
+        setVal('fqCategory', item.category);
+        setVal('fqOrder', item.order || 0);
+        setVal('fqStatus', item.status || 'active');
+    }
+}
+
+function setVal(id, val) {
+    var el = document.getElementById(id);
+    if (el) { el.value = val || ''; }
+}
+
+// ---- Save ----
+async function saveTestimonial() {
+    var data = {
+        name: document.getElementById('tmName').value,
+        position: document.getElementById('tmPosition').value,
+        company: document.getElementById('tmCompany').value,
+        content: document.getElementById('tmContent').value,
+        rating: parseInt(document.getElementById('tmRating').value),
+        image: document.getElementById('tmImage').value,
+        status: document.getElementById('tmStatus').value
+    };
+    if (!data.name || !data.content) { alert('Name and content are required'); return; }
+    var btn = document.getElementById('saveTestimonialBtn');
+    setLoading(btn, true);
+    try {
+        if (currentEditId.testimonials) { await adminApi.updateTestimonial(currentEditId.testimonials, data); }
+        else { await adminApi.createTestimonial(data); }
+        closeModal('testimonialModal'); loadData();
+    } catch (e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+async function savePartner() {
+    var d = {
+        name: document.getElementById('pnName').value,
+        website: document.getElementById('pnUrl').value,
+        logo: document.getElementById('pnLogo').value,
+        order: parseInt(document.getElementById('pnOrder').value) || 0,
+        status: document.getElementById('pnStatus').value
+    };
+    if (!d.name) { alert('Name is required'); return; }
+    var btn = document.getElementById('savePartnerBtn');
+    setLoading(btn, true);
+    try {
+        if (currentEditId.partners) { await adminApi.updatePartner(currentEditId.partners, d); }
+        else { await adminApi.createPartner(d); }
+        closeModal('partnerModal'); loadData();
+    } catch (e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+async function saveFAQ() {
+    var d = {
+        question: document.getElementById('fqQuestion').value,
+        answer: document.getElementById('fqAnswer').value,
+        category: document.getElementById('fqCategory').value,
+        order: parseInt(document.getElementById('fqOrder').value) || 0,
+        status: document.getElementById('fqStatus').value
+    };
+    if (!d.question || !d.answer) { alert('Question and answer are required'); return; }
+    var btn = document.getElementById('saveFAQBtn');
+    setLoading(btn, true);
+    try {
+        if (currentEditId.faqs) { await adminApi.updateFAQ(currentEditId.faqs, d); }
+        else { await adminApi.createFAQ(d); }
+        closeModal('faqModal'); loadData();
+    } catch (e) { alert('Save failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+// ---- Delete ----
+function confirmDeleteItem(id) {
+    pendingDeleteId = id;
+    openModal('deleteModal');
+}
+
+async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    var btn = document.querySelector('#deleteModal .btn-danger');
+    setLoading(btn, true);
+    try {
+        var apis = { testimonials: 'deleteTestimonial', partners: 'deletePartner', faqs: 'deleteFAQ' };
+        await adminApi[apis[activeTab]](pendingDeleteId);
+        closeModal('deleteModal');
+        selected[activeTab] = selected[activeTab].filter(function(s) { return s !== pendingDeleteId; });
+        pendingDeleteId = null;
+        loadData();
+    } catch (e) { alert('Delete failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+// ---- Bulk ----
+async function bulkActivate() { await bulkUpdate('active'); }
+async function bulkDeactivate() { await bulkUpdate('inactive'); }
+
+async function bulkUpdate(status) {
+    var ids = selected[activeTab];
+    if (ids.length === 0) return;
+    var btn = document.querySelector('.bulk-btn');
+    setLoading(btn, true);
+    try {
+        var updateApis = { testimonials: 'updateTestimonial', partners: 'updatePartner', faqs: 'updateFAQ' };
+        for (var i = 0; i < ids.length; i++) {
+            await adminApi[updateApis[activeTab]](ids[i], { status: status });
+        }
+        selected[activeTab] = [];
+        loadData();
+    } catch (e) { alert('Bulk update failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+async function bulkDelete() {
+    var ids = selected[activeTab];
+    if (ids.length === 0) return;
+    if (!confirm('Delete ' + ids.length + ' ' + getLabel() + 's? This cannot be undone.')) return;
+    var btn = document.querySelector('.bulk-btn:last-child');
+    setLoading(btn, true);
+    try {
+        var apis = { testimonials: 'deleteTestimonial', partners: 'deletePartner', faqs: 'deleteFAQ' };
+        for (var i = 0; i < ids.length; i++) { await adminApi[apis[activeTab]](ids[i]); }
+        selected[activeTab] = [];
+        loadData();
+    } catch (e) { alert('Bulk delete failed: ' + (e.message || 'Unknown error')); }
+    finally { setLoading(btn, false); }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadData();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — Testudo Admin</title>
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cog"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-cog"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>FAQ</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="breadcrumb">
+                <span>FAQ</span>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fa fa-question-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="totalFAQs">0</h3>
+                        <p>Total FAQs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #2ecc71;">
+                        <i class="fa fa-check"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="activeFAQs">0</h3>
+                        <p>Active FAQs</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #e74c3c;">
+                        <i class="fa fa-ban"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="inactiveFAQs">0</h3>
+                        <p>Inactive FAQs</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bulk-actions">
+                <button class="bulk-btn" onclick="selectAll()"><i class="fa fa-check-square"></i> Select All</button>
+                <button class="bulk-btn" onclick="bulkActivate()"><i class="fa fa-toggle-on"></i> Activate Selected</button>
+                <button class="bulk-btn" onclick="bulkDeactivate()"><i class="fa fa-toggle-off"></i> Deactivate Selected</button>
+                <button class="bulk-btn" onclick="bulkDelete()" style="color: #e74c3c;"><i class="fa fa-trash"></i> Delete Selected</button>
+            </div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search FAQs..." onkeyup="filterFAQs()">
+                <i class="fa fa-search"></i>
+            </div>
+
+            <div class="table">
+                <div class="table-header">
+                    <h3>FAQs</h3>
+                    <button class="btn-primary" onclick="openAddModal()"><i class="fa fa-plus" style="margin-right:8px;"></i>Add FAQ</button>
+                </div>
+                <div class="table-body" id="faqsTable">
+                    <!-- Table content will be loaded here -->
+                    <div class="empty-state">
+                        <i class="fa fa-spinner fa-spin"></i>
+                        <p>Loading FAQs...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Add/Edit FAQ Modal -->
+    <div class="modal" id="faqModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add FAQ</h3>
+                <button class="modal-close" onclick="closeModal('faqModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="faqQuestion">Question</label>
+                        <input type="text" id="faqQuestion" placeholder="Enter question">
+                    </div>
+                    <div class="form-group">
+                        <label for="faqCategory">Category</label>
+                        <input type="text" id="faqCategory" placeholder="Enter category">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="faqAnswer">Answer</label>
+                    <textarea id="faqAnswer" rows="4" placeholder="Enter answer"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="faqStatus">Status</label>
+                        <select id="faqStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="faqOrder">Order</label>
+                        <input type="number" id="faqOrder" placeholder="Enter order" value="0">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('faqModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveFAQ()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete FAQ</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this FAQ? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+                <button class="btn-danger" onclick="confirmDeleteFAQ()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')" style="color:#e74c3c;cursor:pointer;">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('collapsed');
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('active');
+    }
+});
+
+let allFAQs = [];
+let selectedFAQs = new Set();
+let currentEditId = null;
+
+async function loadFAQs() {
+    try {
+        const data = await adminApi.getFAQs();
+        allFAQs = data.faqs || [];
+        updateStats();
+        renderTable();
+    } catch (error) {
+        console.error('Failed to load FAQs:', error);
+        document.getElementById('faqsTable').innerHTML = `
+            <div class="empty-state">
+                <i class="fa fa-exclamation-triangle" style="font-size:24px;margin-bottom:8px;"></i>
+                <p>Failed to load FAQs. Please try again.</p>
+            </div>
+        `;
+    }
+}
+
+function updateStats() {
+    const total = allFAQs.length;
+    const active = allFAQs.filter(f => f.status === 'active').length;
+    const inactive = total - active;
+
+    document.getElementById('totalFAQs').textContent = total;
+    document.getElementById('activeFAQs').textContent = active;
+    document.getElementById('inactiveFAQs').textContent = inactive;
+}
+
+function renderTable() {
+    const table = document.getElementById('faqsTable');
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+    const filtered = allFAQs.filter(faq => {
+        const matchesSearch = 
+            faq.question.toLowerCase().includes(searchTerm) ||
+            faq.answer.toLowerCase().includes(searchTerm) ||
+            (faq.category && faq.category.toLowerCase().includes(searchTerm));
+        return matchesSearch;
+    });
+
+    if (filtered.length === 0) {
+        table.innerHTML = `
+            <div class="empty-state">
+                <i class="fa fa-question-circle" style="font-size:48px;margin-bottom:16px;"></i>
+                <p>No FAQs found</p>
+            </div>
+        `;
+        return;
+    }
+
+    table.innerHTML = filtered.map(faq => {
+        const initials = faq.question.charAt(0).toUpperCase();
+
+        return `
+            <div class="table-row" onclick="toggleSelection('${faq.id}')" style="cursor:pointer;">
+                <div>
+                    <input type="checkbox" onchange="toggleSelection('${faq.id}')" style="cursor:pointer;" ${selectedFAQs.has(faq.id) ? 'checked' : ''}>
+                </div>
+                <div style="display:flex;align-items:center;gap:12px;">
+                    <div class="faq-icon">${initials}</div>
+                    <div class="faq-info">
+                        <h4>${faq.question}</h4>
+                        <p>${faq.answer.substring(0, 100)}${faq.answer.length > 100 ? '...' : ''}</p>
+                    </div>
+                </div>
+                <div class="status ${faq.status}">${faq.status}</div>
+                <div class="actions">
+                    <button class="btn-icon btn-edit" onclick="event.stopPropagation(); openEditModal('${faq.id}')" title="Edit">
+                        <i class="fa fa-edit" style="font-size:12px;"></i>
+                    </button>
+                    <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteFAQ('${faq.id}')" title="Delete">
+                        <i class="fa fa-trash" style="font-size:12px;"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function toggleSelection(id) {
+    if (selectedFAQs.has(id)) {
+        selectedFAQs.delete(id);
+    } else {
+        selectedFAQs.add(id);
+    }
+    renderTable();
+}
+
+function selectAll() {
+    if (selectedFAQs.size === allFAQs.length) {
+        selectedFAQs.clear();
+    } else {
+        allFAQs.forEach(f => selectedFAQs.add(f.id));
+    }
+    renderTable();
+}
+
+async function bulkActivate() {
+    if (selectedFAQs.size === 0) return;
+
+    try {
+        const faqs = Array.from(selectedFAQs);
+        const updated = faqs.map(id => ({
+            _id: id,
+            updateOne: { update: { $set: { status: 'active' } }, filter: { _id: id } }
+        }));
+        await adminApi.bulkUpdateFAQs({ faqs: updated });
+        closeModal('deleteModal');
+        selectedFAQs.clear();
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to activate FAQs:', error);
+        alert('Failed to activate FAQs. Please try again.');
+    }
+}
+
+async function bulkDeactivate() {
+    if (selectedFAQs.size === 0) return;
+
+    try {
+        const faqs = Array.from(selectedFAQs);
+        const updated = faqs.map(id => ({
+            _id: id,
+            updateOne: { update: { $set: { status: 'inactive' } }, filter: { _id: id } }
+        }));
+        await adminApi.bulkUpdateFAQs({ faqs: updated });
+        closeModal('deleteModal');
+        selectedFAQs.clear();
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to deactivate FAQs:', error);
+        alert('Failed to deactivate FAQs. Please try again.');
+    }
+}
+
+async function bulkDelete() {
+    if (selectedFAQs.size === 0) return;
+
+    if (!confirm('Are you sure you want to delete these FAQs? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        const faqs = Array.from(selectedFAQs);
+        for (const id of faqs) {
+            await adminApi.deleteFAQ(id);
+        }
+        closeModal('deleteModal');
+        selectedFAQs.clear();
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to delete FAQs:', error);
+        alert('Failed to delete FAQs. Please try again.');
+    }
+}
+
+function filterFAQs() {
+    renderTable();
+}
+
+function openAddModal() {
+    currentEditId = null;
+    document.getElementById('modalTitle').textContent = 'Add FAQ';
+    document.getElementById('faqQuestion').value = '';
+    document.getElementById('faqAnswer').value = '';
+    document.getElementById('faqCategory').value = '';
+    document.getElementById('faqStatus').value = 'active';
+    document.getElementById('faqOrder').value = '0';
+    openModal('faqModal');
+}
+
+async function openEditModal(id) {
+    try {
+        const faq = await adminApi.getFAQ(id);
+        currentEditId = id;
+
+        document.getElementById('modalTitle').textContent = 'Edit FAQ';
+        document.getElementById('faqQuestion').value = faq.question || '';
+        document.getElementById('faqAnswer').value = faq.answer || '';
+        document.getElementById('faqCategory').value = faq.category || '';
+        document.getElementById('faqStatus').value = faq.status || 'active';
+        document.getElementById('faqOrder').value = faq.order || 0;
+        openModal('faqModal');
+    } catch (error) {
+        console.error('Failed to load FAQ:', error);
+        alert('Failed to load FAQ details. Please try again.');
+    }
+}
+
+async function saveFAQ() {
+    const faqData = {
+        question: document.getElementById('faqQuestion').value,
+        answer: document.getElementById('faqAnswer').value,
+        category: document.getElementById('faqCategory').value,
+        order: parseInt(document.getElementById('faqOrder').value),
+        status: document.getElementById('faqStatus').value
+    };
+
+    if (!faqData.question || !faqData.answer) {
+        alert('Question and answer are required');
+        return;
+    }
+
+    try {
+        if (currentEditId) {
+            await adminApi.updateFAQ(currentEditId, faqData);
+        } else {
+            await adminApi.createFAQ(faqData);
+        }
+        closeModal('faqModal');
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to save FAQ:', error);
+        alert('Failed to save FAQ. Please try again.');
+    }
+}
+
+async function deleteFAQ(id) {
+    if (!confirm('Are you sure you want to delete this FAQ? This action cannot be undone.')) {
+        return;
+    }
+
+    try {
+        await adminApi.deleteFAQ(id);
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to delete FAQ:', error);
+        alert('Failed to delete FAQ. Please try again.');
+    }
+}
+
+async function confirmDeleteFAQ() {
+    if (!currentEditId) return;
+
+    try {
+        await adminApi.deleteFAQ(currentEditId);
+        closeModal('deleteModal');
+        currentEditId = null;
+        loadFAQs();
+    } catch (error) {
+        console.error('Failed to delete FAQ:', error);
+        alert('Failed to delete FAQ. Please try again.');
+    }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    loadFAQs();
+});
+</script>
+</body>
+</html>

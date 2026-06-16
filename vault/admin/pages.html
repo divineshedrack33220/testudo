@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Pages — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/core@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-image@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-link@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-placeholder@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-underline@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-text-align@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-code-block-lowlight@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-highlight@2.1.13"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lowlight@3.1.0"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tiptap/core@2.1.13/dist/style.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html" class="active"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Pages</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="dashboard.html">Dashboard</a> / <span>Pages</span>
+            </div>
+
+            <div class="table-card" style="margin-bottom:20px;">
+                <div class="table-header">
+                    <h3><i class="fa fa-handshake" style="color:#01a1d1;margin-right:8px;"></i>Companies We've Worked With</h3>
+                    <button class="btn-primary" onclick="openModal('addPartnerModal')" style="font-size:12px;padding:6px 14px;">+ Add Company</button>
+                </div>
+                <div style="padding:24px;">
+                    <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:center;" id="partnerList">
+                        <div class="partner-card" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 24px;background:#0d0d0d;border-radius:10px;border:1px solid rgba(1,161,209,0.08);min-width:130px;position:relative;">
+                            <img src="../img/partners/1.svg" style="height:36px;object-fit:contain;filter:brightness(0) invert(0.7);">
+                            <span style="font-size:12px;color:#888;">TechStart</span>
+                        </div>
+                        <div class="partner-card" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 24px;background:#0d0d0d;border-radius:10px;border:1px solid rgba(1,161,209,0.08);min-width:130px;position:relative;">
+                            <img src="../img/partners/2.svg" style="height:36px;object-fit:contain;filter:brightness(0) invert(0.7);">
+                            <span style="font-size:12px;color:#888;">GreenLeaf</span>
+                        </div>
+                        <div class="partner-card" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 24px;background:#0d0d0d;border-radius:10px;border:1px solid rgba(1,161,209,0.08);min-width:130px;position:relative;">
+                            <img src="../img/partners/1.svg" style="height:36px;object-fit:contain;filter:brightness(0) invert(0.7);">
+                            <span style="font-size:12px;color:#888;">Orbit Media</span>
+                        </div>
+                        <div class="partner-card" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 24px;background:#0d0d0d;border-radius:10px;border:1px solid rgba(1,161,209,0.08);min-width:130px;position:relative;">
+                            <img src="../img/partners/2.svg" style="height:36px;object-fit:contain;filter:brightness(0) invert(0.7);">
+                            <span style="font-size:12px;color:#888;">Nexus Ventures</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Pages</h3>
+                    <span style="font-size:12px;color:#888;">Click <strong style="color:#01a1d1;">Edit</strong> to modify all page content.</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Page</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pagesTableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-history" style="color:#FF9800;margin-right:8px;"></i>Audit Log</h3>
+                    <span style="font-size:12px;color:#888;">Recent changes to pages</span>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>Page</th>
+                            <th>User</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span style="color:#2ecc71;">Updated</span></td>
+                            <td>Home</td>
+                            <td>Admin</td>
+                            <td><small style="color:#888;">Today, 10:23 AM</small></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color:#2ecc71;">Updated</span></td>
+                            <td>About</td>
+                            <td>Admin</td>
+                            <td><small style="color:#888;">Today, 9:45 AM</small></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color:#01a1d1;">Published</span></td>
+                            <td>Services</td>
+                            <td>Admin</td>
+                            <td><small style="color:#888;">Yesterday, 4:12 PM</small></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color:#2ecc71;">Updated</span></td>
+                            <td>Team</td>
+                            <td>Admin</td>
+                            <td><small style="color:#888;">Yesterday, 2:30 PM</small></td>
+                        </tr>
+                        <tr>
+                            <td><span style="color:#e74c3c;">Draft Saved</span></td>
+                            <td>Contact</td>
+                            <td>Admin</td>
+                            <td><small style="color:#888;">2 days ago</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Page Content Modal -->
+    <div class="modal-overlay" id="editPageModal">
+        <div class="modal-box" style="width:720px;">
+            <div class="modal-header">
+                <h3 id="editPageTitle">Editing: <span id="editPageName">Home</span></h3>
+                <button class="modal-close" onclick="closeModal('editPageModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:none;" id="tiptapToolbar">
+                    <div class="tiptap-toolbar">
+                        <button type="button" data-action="bold" title="Bold"><i class="fa fa-bold"></i></button>
+                        <button type="button" data-action="italic" title="Italic"><i class="fa fa-italic"></i></button>
+                        <button type="button" data-action="underline" title="Underline"><i class="fa fa-underline"></i></button>
+                        <button type="button" data-action="heading" data-level="2" title="Heading 2"><i class="fa fa-heading"></i></button>
+                        <button type="button" data-action="bulletList" title="Bullet List"><i class="fa fa-list-ul"></i></button>
+                        <button type="button" data-action="orderedList" title="Ordered List"><i class="fa fa-list-ol"></i></button>
+                        <button type="button" data-action="blockquote" title="Blockquote"><i class="fa fa-quote-right"></i></button>
+                        <button type="button" data-action="codeBlock" title="Code Block"><i class="fa fa-code"></i></button>
+                        <button type="button" data-action="image-upload" title="Upload Image"><i class="fa fa-image"></i></button>
+                        <input type="file" id="tiptapImageUpload" accept="image/*" style="display:none">
+                    </div>
+                </div>
+                <div class="page-editor" id="pageEditor"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('editPageModal')">Cancel</button>
+                <button class="btn-primary" id="savePageBtn" onclick="savePageChanges()">Save All Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Company Modal -->
+    <div class="modal-overlay" id="addPartnerModal">
+        <div class="modal-box" style="width:420px;">
+            <div class="modal-header">
+                <h3>Add Company</h3>
+                <button class="modal-close" onclick="closeModal('addPartnerModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="partnerName">Company Name</label>
+                <input type="text" id="partnerName" placeholder="e.g. Acme Corp">
+                <label for="partnerLogo">Logo Path (relative to root)</label>
+                <input type="text" id="partnerLogo" placeholder="img/partners/1.svg" value="img/partners/1.svg">
+                <div style="font-size:12px;color:#888;margin-top:-8px;">Available: <code style="color:#01a1d1;">img/partners/1.svg</code>, <code style="color:#01a1d1;">img/partners/2.svg</code></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('addPartnerModal')">Cancel</button>
+                <button class="btn-primary" onclick="addPartner()">Add Company</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<style>
+.tiptap-toolbar { display:flex; flex-wrap:wrap; gap:4px; padding:8px 12px; background:#0d0d0d; border:1px solid #333; border-bottom:none; border-radius:8px 8px 0 0; }
+.tiptap-toolbar button { background:none; border:1px solid transparent; color:#888; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:13px; }
+.tiptap-toolbar button:hover { border-color:#01a1d1; color:#fff; }
+.tiptap-toolbar button.is-active { background:rgba(1,161,209,0.2); color:#01a1d1; }
+.ProseMirror { outline:none; min-height:120px; padding:12px; background:#111; border:1px solid #333; border-radius:0 0 8px 8px; color:#ccc; font-size:14px; line-height:1.6; }
+.ProseMirror p { margin:0 0 8px; }
+.ProseMirror h1, .ProseMirror h2, .ProseMirror h3 { color:#fff; margin:16px 0 8px; }
+.ProseMirror h2 { font-size:20px; }
+.ProseMirror ul, .ProseMirror ol { padding-left:20px; }
+.ProseMirror blockquote { border-left:3px solid #01a1d1; padding-left:12px; color:#888; margin:8px 0; }
+.ProseMirror pre { background:#0a0a0a; border-radius:4px; padding:12px; font-size:12px; overflow-x:auto; }
+.ProseMirror img { max-width:100%; border-radius:4px; margin:8px 0; }
+.ProseMirror code { background:#0a0a0a; padding:2px 6px; border-radius:3px; font-size:12px; }
+</style>
+<script>
+var pageContent = {
+    home: {
+        meta: { title: 'Home', slug: 'home', status: 'published' },
+        aboutPreview: '<h2>Who We Are</h2><p>Testudo is a trusted technical and procurement solutions provider serving large enterprises across Nigeria. We help organizations streamline operations, reduce costs, and meet their deliverables through world-class supply chain and technical services.</p><p>With a proven track record working with industry leaders including Unilever, MTN, Total, Ardova, NPA, and Ecobank, we bring reliability and expertise to every engagement.</p>',
+        hero: { heading: 'Reliable Technical & Procurement Solutions', subheading: 'Empowering Nigerian enterprises to operate efficiently and focus on their core business.' },
+        videoUrl: { url: 'https://www.youtube.com/embed/GPu4KwNgjZE?controls=0' },
+        servicesPreview: { heading: 'What We Do', text: 'From technical procurement to project management, we provide end-to-end solutions that help enterprises perform at their best.', btnText: 'View All Services' },
+        stats: { years: '15', projects: '200', clients: '50', awards: '12' },
+        testimonial1: { name: 'Chidi Okonkwo', role: 'Procurement Director, Unilever Nigeria', text: 'Testudo has been a reliable partner in our supply chain operations. Their attention to detail and commitment to delivery timelines is exceptional.' },
+        testimonial2: { name: 'Folake Adeyemi', role: 'Operations Manager, MTN Nigeria', text: 'Working with Testudo streamlined our technical procurement process significantly.' },
+        testimonial3: { name: 'Emeka Nwosu', role: 'GM Technical, Ardova Plc', text: 'Testudo\'s technical expertise and dependable service have made them a go-to partner for our critical procurement needs.' }
+    },
+    about: {
+        meta: { title: 'About', slug: 'about', status: 'published' },
+        hero: { heading: 'About Us', subheading: 'Built on a foundation of reliability, integrity, and technical excellence — serving Nigeria\'s leading enterprises.' },
+        story: '<h2>Our Story</h2><p>Founded with a vision to bridge the gap between operational challenges and world-class solutions, Testudo has grown into a trusted technical and procurement partner for Nigeria\'s leading enterprises.</p><p>Our name, inspired by the Roman military formation, reflects our commitment to strength through unity, strategic positioning, and unwavering reliability.</p>',
+        videoUrl: { url: 'https://www.youtube.com/embed/GPu4KwNgjZE?controls=0' },
+        mission: { heading: 'Our Mission', text: 'To help organizations operate more efficiently by providing world-class technical and procurement solutions that enable them to focus on their core business.' },
+        vision: { heading: 'Our Vision', text: 'To be the most dependable technical and procurement partner for enterprises across Africa, setting the standard for reliability and operational excellence.' },
+        value1: { title: 'Reliability', text: 'We deliver on our commitments, every time. Our clients trust us to meet deadlines and maintain the highest quality standards.' },
+        value2: { title: 'Integrity', text: 'Transparency and honesty guide every transaction. We build lasting relationships through ethical business practices.' },
+        value3: { title: 'Excellence', text: 'We bring deep technical expertise and rigorous quality control to every project, ensuring superior outcomes.' },
+        value4: { title: 'Partnership', text: 'We work as an extension of our clients\' teams, aligning with their goals and delivering solutions that drive real impact.' },
+        stats: { years: '15', projects: '200', clients: '50', awards: '12' },
+        whatWeDo: { heading: 'What We Do', text: 'From technical procurement and supply chain management to project execution and consulting, we provide end-to-end solutions that help enterprises operate efficiently.' },
+        testimonial: { name: 'Chidi Okonkwo', role: 'Procurement Director, Unilever Nigeria', text: 'Testudo has been a reliable partner in our supply chain operations. Their professionalism is outstanding.' }
+    },
+    services: {
+        meta: { title: 'Services', slug: 'services', status: 'published' },
+        hero: { heading: 'Our Services', subheading: 'Comprehensive technical and procurement solutions designed to help your organization operate efficiently and meet its deliverables.' },
+        intro: { heading: 'What We Offer', text: 'We provide end-to-end technical and procurement services that enable enterprises to focus on their core business while we handle the operational complexities.' },
+        service1: { title: 'Technical Procurement', desc: 'End-to-end procurement of technical equipment, spare parts, and specialized materials sourced from verified global and local suppliers with strict quality assurance.' },
+        service2: { title: 'Supply Chain Management', desc: 'Comprehensive supply chain solutions including logistics coordination, inventory management, and vendor relationship management to optimize your operations.' },
+        service3: { title: 'Project Management', desc: 'Expert project management services for technical and infrastructure projects, ensuring timely delivery within budget and specification.' },
+        service4: { title: 'Technical Consulting', desc: 'Strategic technical consulting to help organizations assess needs, evaluate solutions, and implement optimal operational frameworks.' },
+        process1: { title: 'Needs Assessment', text: 'We begin by thoroughly understanding your operational requirements, challenges, and objectives through detailed consultation.' },
+        process2: { title: 'Sourcing & Evaluation', text: 'We leverage our extensive supplier network to source quality materials and services, evaluating options against your specifications.' },
+        process3: { title: 'Execution & Delivery', text: 'Our team manages the end-to-end execution, coordinating logistics and ensuring timely delivery to your specified locations.' },
+        process4: { title: 'Support & Follow-up', text: 'We provide ongoing support and follow-up to ensure delivered solutions meet your expectations and performance requirements.' },
+        why1: { title: 'Proven Track Record', text: 'Trusted by industry leaders including Unilever, MTN, Total, Ardova, NPA, and Ecobank for critical procurement and technical needs.' },
+        why2: { title: 'Deep Industry Expertise', text: 'Our team brings extensive experience across telecom, oil & gas, manufacturing, and public sector operations.' },
+        why3: { title: 'Reliable Delivery', text: 'We pride ourselves on meeting commitments. Our clients count on us to deliver on time, every time.' },
+        why4: { title: 'End-to-End Service', text: 'From needs assessment to delivery and support, we manage the entire lifecycle so you can focus on your core business.' },
+        testimonial: { name: 'Folake Adeyemi', role: 'Operations Manager, MTN Nigeria', text: 'Testudo streamlined our technical procurement process. Their understanding of our industry\'s urgency is remarkable.' }
+    },
+    team: {
+        meta: { title: 'Team', slug: 'team', status: 'published' },
+        hero: { heading: 'Meet Our Team', subheading: 'A dedicated team of procurement specialists, technical experts, and operations professionals committed to your success.' },
+        intro: { heading: 'Who We Are', text: 'Our team brings together deep industry expertise across procurement, technical operations, logistics, and client relations.' },
+        member1: { name: 'Ken Ogunbiyi', role: 'Managing Director', bio: 'With over 20 years of experience in technical procurement and operations, Ken leads Testudo with a vision to set the standard for reliability in enterprise solutions.' },
+        member2: { name: 'Adaobi Eze', role: 'Head of Procurement', bio: 'Adaobi oversees all procurement operations, ensuring every order meets specifications and is delivered on schedule with full quality assurance.' },
+        member3: { name: 'Tunde Bakare', role: 'Technical Operations Manager', bio: 'Tunde brings deep technical expertise across telecom and energy sectors, managing complex technical procurement and project execution.' },
+        member4: { name: 'Chioma Obi', role: 'Client Relations Director', bio: 'Chioma ensures seamless communication and partnership with our enterprise clients, building relationships that deliver lasting value.' },
+        expertise1: { title: 'Procurement', text: 'Expert sourcing and procurement of technical equipment, spare parts, and specialized materials.' },
+        expertise2: { title: 'Supply Chain', text: 'End-to-end supply chain management including logistics, inventory, and vendor coordination.' },
+        expertise3: { title: 'Project Execution', text: 'Technical project management ensuring timely delivery within budget and specification.' },
+        expertise4: { title: 'Consulting', text: 'Strategic consulting to optimize operational frameworks and improve efficiency.' },
+        culture: { heading: 'Our Culture', text: 'We believe in fostering a culture of reliability, accountability, and continuous improvement. Every member of our team is committed to delivering excellence.' },
+        joinUs: { heading: 'Join Our Team', text: 'We are always looking for talented professionals who share our commitment to reliability and technical excellence.' },
+        testimonial: { name: 'Emeka Nwosu', role: 'GM Technical, Ardova Plc', text: 'Testudo\'s technical expertise and dependable service have made them a go-to partner for our critical procurement needs.' }
+    },
+    contact: {
+        meta: { title: 'Contact', slug: 'contact', status: 'published' },
+        hero: { heading: 'Get In Touch', subheading: 'Ready to streamline your operations? Reach out to our team and let us help you meet your deliverables.' },
+        intro: { heading: 'Let\'s Talk', text: 'Whether you need technical procurement support, supply chain solutions, or want to learn more about our services, our team is ready to help.' },
+        address: { label: 'Visit Us', value: 'Lagos, Nigeria' },
+        hours: { label: 'Office Hours', value: 'Monday — Friday, 8:00 AM — 5:00 PM' },
+        email: { label: 'Email Us', value: 'info@testudong.com' },
+        phone: { label: 'Call Us', value: '+234 1 234 5678' },
+        social: { heading: 'Follow Us', text: 'Stay connected with us on social media for the latest updates and insights.' },
+        faq1: { q: 'What industries do you serve?', a: 'We primarily serve large enterprises across telecom, oil & gas, manufacturing, and public sectors in Nigeria.' },
+        faq2: { q: 'What is your procurement process?', a: 'Our process begins with a thorough needs assessment, followed by supplier evaluation, competitive sourcing, quality assurance, and timely delivery with full documentation.' },
+        faq3: { q: 'Do you work with international suppliers?', a: 'Yes, we leverage a global network of verified suppliers to source quality materials and equipment, complementing our local procurement capabilities.' },
+        faq4: { q: 'How do you ensure quality and compliance?', a: 'We maintain strict quality control processes, working only with certified suppliers and conducting thorough inspections before delivery.' }
+    }
+};
+
+var currentPage = '', currentSlug = '', currentPageId = null, tiptapEditor = null;
+
+// Toolbar click handler for native editor
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.tiptap-toolbar button');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    if (action === 'image-upload') { document.getElementById('tiptapImageUpload').click(); return; }
+    
+    if (action === 'bold') document.execCommand('bold', false, null);
+    else if (action === 'italic') document.execCommand('italic', false, null);
+    else if (action === 'underline') document.execCommand('underline', false, null);
+    else if (action === 'heading') {
+        var level = btn.dataset.level || '2';
+        document.execCommand('formatBlock', false, '<h' + level + '>');
+    }
+    else if (action === 'bulletList') document.execCommand('insertUnorderedList', false, null);
+    else if (action === 'orderedList') document.execCommand('insertOrderedList', false, null);
+    else if (action === 'blockquote') document.execCommand('formatBlock', false, '<blockquote>');
+    else if (action === 'codeBlock') document.execCommand('formatBlock', false, '<pre>');
+    
+    updateToolbarState();
+});
+
+document.getElementById('tiptapImageUpload').addEventListener('change', async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    try {
+        var result = await adminApi.uploadImage(file, 'pages');
+        var editorEl = document.querySelector('.tiptap-editor-wrapper .tiptap-content');
+        if (editorEl) editorEl.focus();
+        document.execCommand('insertImage', false, result.url);
+        showToast('Image Uploaded', 'Image has been added to the editor.', 'success');
+    } catch (err) {
+        showToast('Upload Failed', err.message || 'Could not upload image.', 'error');
+    }
+    e.target.value = '';
+});
+
+function updateToolbarState() {
+    document.querySelectorAll('.tiptap-toolbar button[data-action]').forEach(function(btn) {
+        var action = btn.dataset.action;
+        if (action === 'image-upload') return;
+        var isActive = false;
+        if (action === 'bold') isActive = document.queryCommandState('bold');
+        else if (action === 'italic') isActive = document.queryCommandState('italic');
+        else if (action === 'underline') isActive = document.queryCommandState('underline');
+        else if (action === 'bulletList') isActive = document.queryCommandState('insertUnorderedList');
+        else if (action === 'orderedList') isActive = document.queryCommandState('insertOrderedList');
+        btn.classList.toggle('is-active', isActive);
+    });
+}
+
+var sectionTemplates = {
+    seo: function(data) {
+        data = data || {};
+        return '<div class="editor-section"><div class="editor-section-header open" onclick="toggleSection(this)"><h4><i class="fa fa-search" style="color:#2ecc71;"></i>SEO Settings</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body open"><div class="field-group"><label>Meta Title</label><input type="text" value="' + (data.metaTitle||'') + '" onchange="updateField(this,\'seo\',\'metaTitle\')" placeholder="Page title for search engines"></div><div class="field-group"><label>Meta Description</label><textarea onchange="updateField(this,\'seo\',\'metaDescription\')" placeholder="Brief description for search results">' + (data.metaDescription||'') + '</textarea></div><div class="field-row-3"><div class="field-group"><label>OG Title</label><input type="text" value="' + (data.ogTitle||'') + '" onchange="updateField(this,\'seo\',\'ogTitle\')" placeholder="Social share title"></div><div class="field-group"><label>OG Description</label><input type="text" value="' + (data.ogDescription||'') + '" onchange="updateField(this,\'seo\',\'ogDescription\')" placeholder="Social share description"></div><div class="field-group"><label>OG Image URL</label><input type="text" value="' + (data.ogImage||'') + '" onchange="updateField(this,\'seo\',\'ogImage\')" placeholder="Social share image URL"><button class="btn-sm edit" style="margin-top:4px;font-size:11px;" onclick="document.getElementById(\'tiptapImageUpload\').click()">Upload Image</button></div></div></div></div>';
+    },
+    meta: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header open" onclick="toggleSection(this)"><h4><i class="fa fa-cog" style="color:#01a1d1;"></i>Page Settings</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body open"><div class="field-row"><div class="field-group"><label>Page Title</label><input type="text" value="' + data.title + '" onchange="updateField(this,\'meta\',\'title\')"></div><div class="field-group"><label>URL Slug</label><input type="text" value="' + data.slug + '" onchange="updateField(this,\'meta\',\'slug\')"></div></div><div class="field-group"><label>Status</label><select onchange="updateField(this,\'meta\',\'status\')"><option value="published" ' + (data.status === 'published' ? 'selected' : '') + '>Published</option><option value="draft" ' + (data.status === 'draft' ? 'selected' : '') + '>Draft</option></select></div></div></div>';
+    },
+    hero: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header open" onclick="toggleSection(this)"><h4><i class="fa fa-image" style="color:#FF9800;"></i>Hero Banner</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body open"><div class="field-group"><label>Heading</label><input type="text" value="' + data.heading + '" onchange="updateField(this,\'hero\',\'heading\')"></div><div class="field-group"><label>Subheading</label><textarea onchange="updateField(this,\'hero\',\'subheading\')">' + data.subheading + '</textarea></div></div></div>';
+    },
+    rte: function(key, label, content) {
+        return '<div class="editor-section"><div class="editor-section-header open" onclick="toggleSection(this)"><h4><i class="fa fa-edit" style="color:#01a1d1;"></i>' + label + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body open"><div class="tiptap-editor-wrapper" data-key="' + key + '"><div class="ProseMirror tiptap-content">' + (content||'') + '</div></div></div></div>';
+    },
+    video: function(data) {
+        if (!data) return '';
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-video" style="color:#e74c3c;"></i>YouTube Video</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-group"><label>YouTube Embed URL</label><input type="text" value="' + data.url + '" onchange="updateField(this,\'videoUrl\',\'url\')"><div style="font-size:11px;color:#555;margin-top:4px;">Paste the full embed URL from YouTube, e.g. <code style="color:#01a1d1;">https://www.youtube.com/embed/VIDEO_ID</code></div></div></div></div>';
+    },
+    simpleText: function(key, label, data) {
+        if (!data) return '';
+        var fields = '';
+        for (var k in data) {
+            if (k === 'heading' || k === 'text' || k === 'btnText') {
+                var fieldLabel = k === 'heading' ? 'Heading' : k === 'text' ? 'Text' : 'Button Text';
+                var isTextarea = k === 'text';
+                fields += '<div class="field-group"><label>' + fieldLabel + '</label>' + (isTextarea ? '<textarea onchange="updateField(this,\'' + key + '\',\'' + k + '\')">' + data[k] + '</textarea>' : '<input type="text" value="' + data[k] + '" onchange="updateField(this,\'' + key + '\',\'' + k + '\')">') + '</div>';
+            }
+        }
+        return fields ? '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-align-left" style="color:#2ecc71;"></i>' + label + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body">' + fields + '</div></div>' : '';
+    },
+    stats: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-chart-simple" style="color:#9b59b6;"></i>Statistics</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-row-4"><div class="field-group"><label>Years</label><input type="text" value="' + data.years + '" onchange="updateField(this,\'stats\',\'years\')"></div><div class="field-group"><label>Projects</label><input type="text" value="' + data.projects + '" onchange="updateField(this,\'stats\',\'projects\')"></div><div class="field-group"><label>Clients</label><input type="text" value="' + data.clients + '" onchange="updateField(this,\'stats\',\'clients\')"></div><div class="field-group"><label>Awards</label><input type="text" value="' + data.awards + '" onchange="updateField(this,\'stats\',\'awards\')"></div></div></div></div>';
+    },
+    testimonial: function(key, label, data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-star" style="color:#FF9800;"></i>' + label + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-row"><div class="field-group"><label>Name</label><input type="text" value="' + data.name + '" onchange="updateField(this,\'' + key + '\',\'name\')"></div><div class="field-group"><label>Role</label><input type="text" value="' + data.role + '" onchange="updateField(this,\'' + key + '\',\'role\')"></div></div><div class="field-group"><label>Testimonial Text</label><textarea onchange="updateField(this,\'' + key + '\',\'text\')">' + data.text + '</textarea></div></div></div>';
+    },
+    cardGroup: function(items) {
+        var html = '';
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            html += '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-square" style="color:#01a1d1;"></i>' + item.title + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-group"><label>Title</label><input type="text" value="' + item.title + '" onchange="updateField(this,\'' + item.key + '\',\'title\')"></div><div class="field-group"><label>Text</label><textarea onchange="updateField(this,\'' + item.key + '\',\'text\')">' + item.text + '</textarea></div></div></div>';
+        }
+        return html;
+    },
+    serviceCard: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-cube" style="color:#01a1d1;"></i>' + data.title + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-group"><label>Service Name</label><input type="text" value="' + data.title + '" onchange="updateField(this,\'' + data.key + '\',\'title\')"></div><div class="field-group"><label>Description</label><textarea onchange="updateField(this,\'' + data.key + '\',\'desc\')">' + data.desc + '</textarea></div></div></div>';
+    },
+    processStep: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-arrow-right" style="color:#2ecc71;"></i>' + data.title + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-group"><label>Step Title</label><input type="text" value="' + data.title + '" onchange="updateField(this,\'' + data.key + '\',\'title\')"></div><div class="field-group"><label>Description</label><textarea onchange="updateField(this,\'' + data.key + '\',\'text\')">' + data.text + '</textarea></div></div></div>';
+    },
+    faq: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-question-circle" style="color:#FF9800;"></i>FAQ</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-group"><label>Question</label><input type="text" value="' + data.q + '" onchange="updateField(this,\'' + data.key + '\',\'q\')"></div><div class="field-group"><label>Answer</label><textarea onchange="updateField(this,\'' + data.key + '\',\'a\')">' + data.a + '</textarea></div></div></div>';
+    },
+    contactInfo: function(data) {
+        var fields = '';
+        var items = { address: 'Visit Us', hours: 'Office Hours', email: 'Email Us', phone: 'Call Us' };
+        for (var k in items) {
+            if (data[k]) {
+                fields += '<div class="field-group"><label>' + items[k] + '</label><input type="text" value="' + data[k].value + '" onchange="updateField(this,\'' + k + '\',\'value\')"></div>';
+            }
+        }
+        return fields ? '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-address-card" style="color:#01a1d1;"></i>Contact Information</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body">' + fields + '</div></div>' : '';
+    },
+    teamMember: function(data) {
+        return '<div class="editor-section"><div class="editor-section-header" onclick="toggleSection(this)"><h4><i class="fa fa-user" style="color:#01a1d1;"></i>' + data.name + '</h4><span class="toggle-icon"><i class="fa fa-chevron-right"></i></span></div><div class="editor-section-body"><div class="field-row"><div class="field-group"><label>Name</label><input type="text" value="' + data.name + '" onchange="updateField(this,\'' + data.key + '\',\'name\')"></div><div class="field-group"><label>Role</label><input type="text" value="' + data.role + '" onchange="updateField(this,\'' + data.key + '\',\'role\')"></div></div><div class="field-group"><label>Bio</label><textarea onchange="updateField(this,\'' + data.key + '\',\'bio\')">' + data.bio + '</textarea></div></div></div>';
+    }
+};
+
+function toggleSection(header) {
+    header.classList.toggle('open');
+    var body = header.nextElementSibling;
+    body.classList.toggle('open');
+}
+
+function updateField(el, section, field) {
+    if (pageContent[currentPage] && pageContent[currentPage][section]) {
+        pageContent[currentPage][section][field] = el.value;
+    }
+}
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+
+// Load pages from API
+async function loadPagesTable() {
+    var tbody = document.getElementById('pagesTableBody');
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading pages...</td></tr>';
+    try {
+        var data = await adminApi.getPages();
+        var pages = data.pages || [];
+        if (pages.length > 0) {
+            tbody.innerHTML = '';
+            pages.forEach(function(p) {
+                var tr = document.createElement('tr');
+                var id = p._id || p.id || '';
+                tr.innerHTML = '<td><strong>' + p.title + '</strong><br><small style="color:#888;">' + p.slug + '</small></td>' +
+                    '<td><span class="status ' + (p.status||'published') + '">' + (p.status==='draft'?'Draft':'Published') + '</span></td>' +
+                    '<td>' + (p.updatedAt ? new Date(p.updatedAt).toLocaleDateString() : 'N/A') + '</td>' +
+                    '<td><button class="btn-sm edit" onclick="editPage(\'' + p.title.replace(/'/g,"\\'",'g') + '\',\'' + p.slug + '\',\'' + (p.status||'published') + '\',\'' + id + '\')">Edit</button></td>';
+                tbody.appendChild(tr);
+            });
+            return;
+        }
+    } catch (e) { console.warn('Pages API unavailable, using fallback', e); }
+    // Fallback: hardcoded rows with correct slugs matching seedData
+    var fallback = [
+        { title:'Home',     slug:'home',     status:'published' },
+        { title:'About',    slug:'about',    status:'published' },
+        { title:'Services', slug:'services', status:'published' },
+        { title:'Team',     slug:'team',     status:'published' },
+        { title:'Contact',  slug:'contact',  status:'published' }
+    ];
+    tbody.innerHTML = '';
+    fallback.forEach(function(p) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td><strong>' + p.title + '</strong><br><small style="color:#888;">' + p.slug + '</small></td>' +
+            '<td><span class="status published">Published</span></td>' +
+            '<td>—</td>' +
+            '<td><button class="btn-sm edit" onclick="editPage(\'' + p.title + '\',\'' + p.slug + '\',\'published\',\'\')"  title="API offline — limited save">Edit</button></td>';
+        tbody.appendChild(tr);
+    });
+}
+
+// Add partner
+function addPartner() {
+    var name = document.getElementById('partnerName').value.trim();
+    var logo = document.getElementById('partnerLogo').value.trim();
+    if (!name) { showToast('Missing Field','Please enter a company name.','warning'); return; }
+    if (!logo) { logo = 'img/partners/1.svg'; }
+    var list = document.getElementById('partnerList');
+    var card = document.createElement('div');
+    card.className = 'partner-card';
+    card.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 24px;background:#0d0d0d;border-radius:10px;border:1px solid rgba(1,161,209,0.08);min-width:130px;position:relative;';
+    var close = document.createElement('button');
+    close.textContent = '\u00d7';
+    close.style.cssText = 'position:absolute;top:4px;right:6px;background:none;border:none;color:#555;cursor:pointer;font-size:14px;line-height:1;padding:2px;';
+    close.onclick = function() { card.remove(); };
+    card.appendChild(close);
+    var img = document.createElement('img');
+    img.src = '../' + logo;
+    img.style.cssText = 'height:36px;object-fit:contain;filter:brightness(0) invert(0.7);';
+    img.onerror = function() { img.src = '../img/partners/1.svg'; };
+    card.appendChild(img);
+    var label = document.createElement('span');
+    label.style.cssText = 'font-size:12px;color:#888;';
+    label.textContent = name;
+    card.appendChild(label);
+    card.style.animation = 'fadeUp 0.3s ease';
+    list.appendChild(card);
+    document.getElementById('partnerName').value = '';
+    document.getElementById('partnerLogo').value = 'img/partners/1.svg';
+    showToast('Company Added', name + ' has been added to the partner list.', 'success');
+    closeModal('addPartnerModal');
+}
+
+async function editPage(name, slug, status, pageId) {
+    currentPage = { 'Home':'home','About':'about','Services':'services','Team':'team','Contact':'contact' }[name] || 'home';
+    currentSlug = slug;
+    currentPageId = pageId;
+    document.getElementById('editPageName').textContent = name;
+    document.getElementById('tiptapToolbar').style.display = 'none';
+
+    // Merge into pageContent directly so edit handlers work on the same object
+    var data = pageContent[currentPage];
+    if (!data) { data = pageContent[currentPage] = {}; }
+    if (!data.seo) data.seo = { metaTitle:'', metaDescription:'', ogTitle:'', ogDescription:'', ogImage:'' };
+
+    // Try to load from API — merge saved data over defaults
+    if (pageId) {
+      try {
+        var apiPage = await adminApi.getPage(pageId);
+        if (apiPage && apiPage.page) {
+          var p = apiPage.page;
+          data.meta = { title: p.title || name, slug: p.slug || slug, status: p.status || status };
+          if (p.seo) data.seo = p.seo;
+          // Overwrite each section from saved API data
+          (p.sections || []).forEach(function(s) {
+            data[s.type] = s.content;
+          });
+        }
+      } catch (e) { console.warn('API load failed, using local defaults', e); }
+    }
+
+    // Ensure hero exists
+    if (!data.hero) data.hero = { heading:'', subheading:'' };
+
+    var html = '';
+    html += sectionTemplates.seo(data.seo);
+    html += sectionTemplates.meta(data.meta);
+    html += sectionTemplates.hero(data.hero);
+
+    switch(currentPage) {
+        case 'home':
+            html += sectionTemplates.rte('aboutPreview', 'About Preview', data.aboutPreview || '<h2>Who We Are</h2><p>We are a creative agency passionate about building brands that matter.</p>');
+            html += sectionTemplates.video(data.videoUrl);
+            html += sectionTemplates.simpleText('servicesPreview', 'Services Preview', data.servicesPreview);
+            html += sectionTemplates.stats(data.stats);
+            html += sectionTemplates.testimonial('testimonial1', 'Testimonial 1', data.testimonial1);
+            html += sectionTemplates.testimonial('testimonial2', 'Testimonial 2', data.testimonial2);
+            html += sectionTemplates.testimonial('testimonial3', 'Testimonial 3', data.testimonial3);
+            break;
+        case 'about':
+            html += sectionTemplates.rte('story', 'Our Story', data.story || '<h2>Our Story</h2><p>Founded in 2015, Testudo began with a simple mission.</p>');
+            html += sectionTemplates.video(data.videoUrl);
+            html += sectionTemplates.simpleText('mission', 'Our Mission', data.mission);
+            html += sectionTemplates.simpleText('vision', 'Our Vision', data.vision);
+            html += sectionTemplates.cardGroup([
+                { key:'value1', title:data.value1.title, text:data.value1.text },
+                { key:'value2', title:data.value2.title, text:data.value2.text },
+                { key:'value3', title:data.value3.title, text:data.value3.text },
+                { key:'value4', title:data.value4.title, text:data.value4.text }
+            ]);
+            html += sectionTemplates.stats(data.stats);
+            html += sectionTemplates.simpleText('whatWeDo', 'What We Do', data.whatWeDo);
+            html += sectionTemplates.testimonial('testimonial', 'Testimonial', data.testimonial);
+            break;
+        case 'services':
+            html += sectionTemplates.simpleText('intro', 'Intro Text', data.intro);
+            html += sectionTemplates.serviceCard({ key:'service1', title:data.service1.title, desc:data.service1.desc });
+            html += sectionTemplates.serviceCard({ key:'service2', title:data.service2.title, desc:data.service2.desc });
+            html += sectionTemplates.serviceCard({ key:'service3', title:data.service3.title, desc:data.service3.desc });
+            html += sectionTemplates.serviceCard({ key:'service4', title:data.service4.title, desc:data.service4.desc });
+            html += sectionTemplates.processStep({ key:'process1', title:data.process1.title, text:data.process1.text });
+            html += sectionTemplates.processStep({ key:'process2', title:data.process2.title, text:data.process2.text });
+            html += sectionTemplates.processStep({ key:'process3', title:data.process3.title, text:data.process3.text });
+            html += sectionTemplates.processStep({ key:'process4', title:data.process4.title, text:data.process4.text });
+            html += sectionTemplates.cardGroup([
+                { key:'why1', title:data.why1.title, text:data.why1.text },
+                { key:'why2', title:data.why2.title, text:data.why2.text },
+                { key:'why3', title:data.why3.title, text:data.why3.text },
+                { key:'why4', title:data.why4.title, text:data.why4.text }
+            ]);
+            html += sectionTemplates.testimonial('testimonial', 'Testimonial', data.testimonial);
+            break;
+        case 'team':
+            html += sectionTemplates.simpleText('intro', 'Intro Text', data.intro);
+            html += sectionTemplates.teamMember({ key:'member1', name:data.member1.name, role:data.member1.role, bio:data.member1.bio });
+            html += sectionTemplates.teamMember({ key:'member2', name:data.member2.name, role:data.member2.role, bio:data.member2.bio });
+            html += sectionTemplates.teamMember({ key:'member3', name:data.member3.name, role:data.member3.role, bio:data.member3.bio });
+            html += sectionTemplates.teamMember({ key:'member4', name:data.member4.name, role:data.member4.role, bio:data.member4.bio });
+            html += sectionTemplates.cardGroup([
+                { key:'expertise1', title:data.expertise1.title, text:data.expertise1.text },
+                { key:'expertise2', title:data.expertise2.title, text:data.expertise2.text },
+                { key:'expertise3', title:data.expertise3.title, text:data.expertise3.text },
+                { key:'expertise4', title:data.expertise4.title, text:data.expertise4.text }
+            ]);
+            html += sectionTemplates.simpleText('culture', 'Our Culture', data.culture);
+            html += sectionTemplates.simpleText('joinUs', 'Join Our Team', data.joinUs);
+            html += sectionTemplates.testimonial('testimonial', 'Testimonial', data.testimonial);
+            break;
+        case 'contact':
+            html += sectionTemplates.simpleText('intro', 'Intro Text', data.intro);
+            html += sectionTemplates.contactInfo(data);
+            html += sectionTemplates.simpleText('social', 'Social Media', data.social);
+            html += sectionTemplates.faq({ key:'faq1', q:data.faq1.q, a:data.faq1.a });
+            html += sectionTemplates.faq({ key:'faq2', q:data.faq2.q, a:data.faq2.a });
+            html += sectionTemplates.faq({ key:'faq3', q:data.faq3.q, a:data.faq3.a });
+            html += sectionTemplates.faq({ key:'faq4', q:data.faq4.q, a:data.faq4.a });
+            break;
+    }
+    document.getElementById('pageEditor').innerHTML = html;
+    document.getElementById('tiptapToolbar').style.display = 'flex';
+    initTiptapEditors();
+    openModal('editPageModal');
+}
+
+function initTiptapEditors() {
+    document.querySelectorAll('.tiptap-editor-wrapper').forEach(function(wrapper) {
+        var key = wrapper.dataset.key;
+        var editorEl = wrapper.querySelector('.tiptap-content');
+        if (!editorEl || wrapper.classList.contains('tiptap-initialized')) return;
+        wrapper.classList.add('tiptap-initialized');
+        // Simple contenteditable-based inline editor (no build step needed)
+        editorEl.contentEditable = true;
+        editorEl.addEventListener('input', function() {
+            if (!pageContent[currentPage]) pageContent[currentPage] = {};
+            pageContent[currentPage][key] = editorEl.innerHTML;
+        });
+        // Listen to toolbar commands
+        editorEl.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') { e.preventDefault(); document.execCommand('insertHTML', false, '&nbsp;&nbsp;&nbsp;&nbsp;'); }
+        });
+    });
+}
+
+async function savePageChanges() {
+    var btn = document.getElementById('savePageBtn');
+    setLoading(btn, true);
+    document.querySelectorAll('.tiptap-editor-wrapper').forEach(function(wrapper) {
+        var key = wrapper.dataset.key;
+        var editorEl = wrapper.querySelector('.tiptap-content');
+        if (editorEl && pageContent[currentPage]) {
+            pageContent[currentPage][key] = editorEl.innerHTML;
+        }
+    });
+    var data = pageContent[currentPage];
+    var sections = [];
+    sections.push({ type:'hero', content: data.hero || {} });
+    Object.keys(data).forEach(function(k) {
+        if (['meta','hero','seo'].indexOf(k) !== -1) return;
+        var v = data[k];
+        if (typeof v === 'object' || typeof v === 'string') {
+            sections.push({ type:k, content: v });
+        }
+    });
+    var payload = {
+        title: data.meta?.title || '',
+        slug: data.meta?.slug || '',
+        status: data.meta?.status || 'published',
+        sections: sections,
+        seo: data.seo || {}
+    };
+    try {
+        if (currentPageId) {
+            await adminApi.updatePage(currentPageId, payload);
+        } else if (currentSlug) {
+            await adminApi.updatePage(currentSlug, payload);
+        } else {
+            await adminApi.createPage(payload);
+        }
+        showToast('Changes Saved', 'All page content saved successfully.', 'success');
+        closeModal('editPageModal');
+    } catch (e) {
+        showToast('Save Failed', e.message || 'Could not save changes.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+document.addEventListener('DOMContentLoaded', loadPagesTable);
+</script>
+
+</body>
+</html>

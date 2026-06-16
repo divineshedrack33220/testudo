@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Team — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html" class="active"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Team</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="dashboard.html">Dashboard</a> / <span>Team</span>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Team Members</h3>
+                    <button class="btn-primary" onclick="openNewMemberModal()">+ Add Member</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="teamTableBody">
+                        <tr id="teamLoadingRow"><td colspan="4" style="text-align:center;padding:32px;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading team members...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Member Modal -->
+    <div class="modal-overlay" id="editMemberModal">
+        <div class="modal-box" style="width:560px;">
+            <div class="modal-header">
+                <h3 id="editMemberTitle">Edit Member</h3>
+                <button class="modal-close" onclick="closeModal('editMemberModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="memberName">Name</label>
+                <input type="text" id="memberName">
+                <label for="memberRole">Role / Position</label>
+                <input type="text" id="memberRole">
+                <label for="memberBio">Bio</label>
+                <textarea id="memberBio" style="min-height:80px;"></textarea>
+                <label for="memberImage">Photo URL</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" id="memberImage" placeholder="https://... or upload" style="flex:1;">
+                    <button class="btn-sm edit" onclick="document.getElementById('memberImageUpload').click()" style="white-space:nowrap;">Upload</button>
+                    <input type="file" id="memberImageUpload" accept="image/*" style="display:none">
+                </div>
+                <label for="memberLinkedin" style="margin-top:12px;display:block;">LinkedIn URL</label>
+                <input type="url" id="memberLinkedin" placeholder="https://linkedin.com/in/name">
+                <label for="memberTwitter" style="margin-top:4px;display:block;">Twitter / X URL</label>
+                <input type="url" id="memberTwitter" placeholder="https://twitter.com/handle">
+                <label for="memberEmail" style="margin-top:4px;display:block;">Email (optional)</label>
+                <input type="email" id="memberEmail" placeholder="member@testudo.com">
+                <label for="memberStatus" style="margin-top:12px;display:block;">Status</label>
+                <select id="memberStatus">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('editMemberModal')">Cancel</button>
+                <button class="btn-primary" id="saveMemberBtn" onclick="saveMemberChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteMemberModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Delete Team Member</h3>
+                <button class="modal-close" onclick="closeModal('deleteMemberModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteMemberName">this member</strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteMemberModal')">Cancel</button>
+                <button class="btn-danger" id="confirmDeleteMemberBtn" onclick="confirmDeleteMemberAction()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+var currentMemberId = null;
+var pendingDeleteMemberId = null;
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+
+document.getElementById('memberImageUpload').addEventListener('change', async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    try {
+        var result = await adminApi.uploadImage(file, 'team');
+        document.getElementById('memberImage').value = result.url;
+        showToast('Image Uploaded', 'Member photo uploaded successfully.', 'success');
+    } catch (err) {
+        showToast('Upload Failed', err.message || 'Could not upload image.', 'error');
+    }
+    e.target.value = '';
+});
+
+// Load team from API
+async function loadTeamTable() {
+    var tbody = document.getElementById('teamTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading...</td></tr>';
+    try {
+        var data = await adminApi.getTeam();
+        var members = data.members || [];
+        tbody.innerHTML = '';
+        if (members.length > 0) {
+            members.forEach(function(m) {
+                var tr = document.createElement('tr');
+                var id = m._id || m.id || '';
+                var imgHtml = m.image ? '<img src="' + m.image + '" style="height:30px;width:30px;object-fit:cover;border-radius:50%;margin-right:8px;vertical-align:middle;">' : '<div style="display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;background:#1a1a1a;border-radius:50%;font-size:13px;font-weight:700;color:#01a1d1;margin-right:8px;vertical-align:middle;">' + (m.name||'?').charAt(0).toUpperCase() + '</div>';
+                tr.innerHTML = '<td>' + imgHtml + '<strong>' + (m.name||'') + '</strong></td>' +
+                    '<td>' + (m.role||'') + '</td>' +
+                    '<td><span class="status ' + (m.status||'active') + '">' + (m.status==='inactive'?'Inactive':'Active') + '</span></td>' +
+                    '<td><button class="btn-sm edit" onclick="editMember(\'' + id + '\')">Edit</button> ' +
+                    '<button class="btn-sm delete" onclick="confirmDeleteMember(\'' + (m.name||'').replace(/'/g,"\\'") + '\',\'' + id + '\')">Delete</button></td>';
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:#555;"><i class="fa fa-users" style="font-size:28px;display:block;margin-bottom:12px;"></i>No team members yet.<br><button class="btn-primary" style="margin-top:12px;font-size:12px;padding:8px 16px;" onclick="openNewMemberModal()">+ Add First Member</button></td></tr>';
+        }
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#e74c3c;"><i class="fa fa-exclamation-triangle"></i> Failed to load team members. Is the API running?</td></tr>';
+        console.warn('Team API error', e);
+    }
+}
+
+async function editMember(idOrSlug) {
+    currentMemberId = idOrSlug;
+    document.getElementById('editMemberTitle').textContent = 'Edit Member';
+    document.getElementById('memberName').value = '';
+    document.getElementById('memberRole').value = '';
+    document.getElementById('memberBio').value = '';
+    document.getElementById('memberImage').value = '';
+    document.getElementById('memberLinkedin').value = '';
+    document.getElementById('memberTwitter').value = '';
+    document.getElementById('memberEmail').value = '';
+    document.getElementById('memberStatus').value = 'active';
+    try {
+        var data = await adminApi.getMember(idOrSlug);
+        var m = data.member || data;
+        document.getElementById('editMemberTitle').textContent = 'Edit: ' + (m.name||'Member');
+        document.getElementById('memberName').value = m.name || '';
+        document.getElementById('memberRole').value = m.role || '';
+        document.getElementById('memberBio').value = m.bio || '';
+        document.getElementById('memberImage').value = m.image || '';
+        document.getElementById('memberLinkedin').value = m.linkedin || '';
+        document.getElementById('memberTwitter').value = m.twitter || '';
+        document.getElementById('memberEmail').value = m.email || '';
+        document.getElementById('memberStatus').value = m.status || 'active';
+    } catch (e) { console.warn('Member load failed', e); }
+    openModal('editMemberModal');
+}
+
+async function editMemberFromTitle(title) {
+    currentMemberId = null;
+    document.getElementById('editMemberTitle').textContent = 'Edit: ' + title;
+    document.getElementById('memberName').value = title;
+    document.getElementById('memberRole').value = '';
+    document.getElementById('memberBio').value = '';
+    document.getElementById('memberImage').value = '';
+    document.getElementById('memberLinkedin').value = '';
+    document.getElementById('memberTwitter').value = '';
+    document.getElementById('memberEmail').value = '';
+    document.getElementById('memberStatus').value = 'active';
+    try {
+        var data = await adminApi.getTeam({ name: title });
+        var members = data.members || [];
+        var found = members.find(function(m) { return m.name === title; });
+        if (found) {
+            currentMemberId = found._id || found.id;
+            document.getElementById('memberName').value = found.name || '';
+            document.getElementById('memberRole').value = found.role || '';
+            document.getElementById('memberBio').value = found.bio || '';
+            document.getElementById('memberImage').value = found.image || '';
+            document.getElementById('memberLinkedin').value = found.linkedin || '';
+            document.getElementById('memberTwitter').value = found.twitter || '';
+            document.getElementById('memberEmail').value = found.email || '';
+            document.getElementById('memberStatus').value = found.status || 'active';
+        }
+    } catch (e) { console.warn('Could not load member by title', e); }
+    openModal('editMemberModal');
+}
+
+async function saveMemberChanges() {
+    var btn = document.getElementById('saveMemberBtn');
+    var name = document.getElementById('memberName').value.trim();
+    if (!name) { showToast('Missing Field','Member name is required.','warning'); return; }
+    var role = document.getElementById('memberRole').value.trim();
+    if (!role) { showToast('Missing Field','Member role is required.','warning'); return; }
+    setLoading(btn, true);
+    var bio = document.getElementById('memberBio').value.trim();
+    var image = document.getElementById('memberImage').value.trim();
+    var linkedin = document.getElementById('memberLinkedin').value.trim();
+    var twitter = document.getElementById('memberTwitter').value.trim();
+    var email = document.getElementById('memberEmail').value.trim();
+    var status = document.getElementById('memberStatus').value;
+    var payload = { name: name, role: role, bio: bio, image: image || undefined, linkedin: linkedin || undefined, twitter: twitter || undefined, email: email || undefined, status: status };
+    try {
+        if (currentMemberId) {
+            await adminApi.updateMember(currentMemberId, payload);
+            showToast('Changes Saved', 'Team member updated successfully.', 'success');
+        } else {
+            await adminApi.createMember(payload);
+            showToast('Member Added', '"' + name + '" has been added to the team.', 'success');
+        }
+        closeModal('editMemberModal');
+        loadTeamTable();
+    } catch (e) {
+        showToast('Save Failed', e.message || 'Could not save member.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+function confirmDeleteMember(name, id) {
+    document.getElementById('deleteMemberName').textContent = name;
+    pendingDeleteMemberId = id;
+    openModal('deleteMemberModal');
+}
+
+async function confirmDeleteMemberAction() {
+    var btn = document.getElementById('confirmDeleteMemberBtn');
+    setLoading(btn, true, 'Deleting...');
+    try {
+        await adminApi.deleteMember(pendingDeleteMemberId);
+        showToast('Member Deleted', 'Team member has been removed.', 'error');
+        closeModal('deleteMemberModal');
+        loadTeamTable();
+    } catch (e) {
+        showToast('Delete Failed', e.message || 'Could not delete member.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+function openNewMemberModal() {
+    currentMemberId = null;
+    document.getElementById('editMemberTitle').textContent = 'Add New Member';
+    document.getElementById('memberName').value = '';
+    document.getElementById('memberRole').value = '';
+    document.getElementById('memberBio').value = '';
+    document.getElementById('memberImage').value = '';
+    document.getElementById('memberLinkedin').value = '';
+    document.getElementById('memberTwitter').value = '';
+    document.getElementById('memberEmail').value = '';
+    document.getElementById('memberStatus').value = 'active';
+    openModal('editMemberModal');
+}
+
+document.addEventListener('DOMContentLoaded', loadTeamTable);
+</script>
+
+</body>
+</html>

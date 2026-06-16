@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Testudo Admin</title>
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html" class="active"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Dashboard</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+
+            <div class="breadcrumb">
+                <span>Dashboard</span>
+            </div>
+
+            <!-- Page Visits Chart -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-globe" style="color:#01a1d1;margin-right:8px;"></i>Page Visits</h3>
+                    <span style="font-size:12px;color:#888;">Last 30 days (approximate)</span>
+                </div>
+                <div style="padding:20px 24px;">
+                    <div class="chart-row">
+                        <div class="chart-label">Home</div>
+                        <div class="chart-bar-bg"><div class="chart-bar" style="width:72%;">1,248</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">About</div>
+                        <div class="chart-bar-bg"><div class="chart-bar orange" style="width:58%;">892</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Services</div>
+                        <div class="chart-bar-bg"><div class="chart-bar green" style="width:64%;">1,034</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Team</div>
+                        <div class="chart-bar-bg"><div class="chart-bar purple" style="width:41%;">612</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Contact</div>
+                        <div class="chart-bar-bg"><div class="chart-bar red" style="width:53%;">756</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Traffic Sources -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-share-alt" style="color:#01a1d1;margin-right:8px;"></i>Traffic Sources</h3>
+                    <span style="font-size:12px;color:#888;">Last 30 days (approximate)</span>
+                </div>
+                <div style="padding:20px 24px;">
+                    <div class="chart-row">
+                        <div class="chart-label">Direct</div>
+                        <div class="chart-bar-bg"><div class="chart-bar" style="width:45%;">45%</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Search</div>
+                        <div class="chart-bar-bg"><div class="chart-bar orange" style="width:28%;">28%</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Social</div>
+                        <div class="chart-bar-bg"><div class="chart-bar green" style="width:17%;">17%</div></div>
+                    </div>
+                    <div class="chart-row">
+                        <div class="chart-label">Referral</div>
+                        <div class="chart-bar-bg"><div class="chart-bar purple" style="width:10%;">10%</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cards">
+                <div class="card" onclick="window.location.href='pages.html'" style="cursor:pointer;">
+                    <div class="card-icon cyan"><i class="fa fa-file"></i></div>
+                    <div class="card-value" id="statPages">—</div>
+                    <div class="card-label">Pages</div>
+                </div>
+                <div class="card" onclick="window.location.href='services.html'" style="cursor:pointer;">
+                    <div class="card-icon cyan"><i class="fa fa-cog"></i></div>
+                    <div class="card-value" id="statServices">—</div>
+                    <div class="card-label">Services</div>
+                </div>
+                <div class="card" onclick="window.location.href='team.html'" style="cursor:pointer;">
+                    <div class="card-icon cyan"><i class="fa fa-users"></i></div>
+                    <div class="card-value" id="statTeam">—</div>
+                    <div class="card-label">Team Members</div>
+                </div>
+                <div class="card" onclick="window.location.href='messages.html'" style="cursor:pointer;">
+                    <div class="card-icon orange"><i class="fa fa-envelope"></i></div>
+                    <div class="card-value" id="statMessages">—</div>
+                    <div class="card-label">Messages</div>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>Recent Messages</h3>
+                    <a href="messages.html" class="btn-primary">View All</a>
+                </div>
+                <div id="recentMessagesList">
+                    <div style="padding:32px;text-align:center;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading messages...</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="dashboardModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Quick View</h3>
+                <button class="modal-close" onclick="closeModal('dashboardModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Select a data point to explore further analytics.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('dashboardModal')">Close</button>
+                <button class="btn-primary">View Full Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Detail Modal -->
+    <div class="modal-overlay" id="analyticsModal">
+        <div class="modal-box" style="width:520px;">
+            <div class="modal-header">
+                <h3 id="analyticsModalTitle">Analytics Detail</h3>
+                <button class="modal-close" onclick="closeModal('analyticsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <div>
+                        <div style="font-size:28px;font-weight:700;color:#fff;" id="analyticsModalValue"></div>
+                        <div style="font-size:12px;color:#888;margin-top:2px;" id="analyticsModalLabel"></div>
+                    </div>
+                    <div style="font-size:13px;font-weight:500;padding:4px 12px;border-radius:20px;" id="analyticsModalChange"></div>
+                </div>
+                <div style="background:#111;padding:16px;border-radius:8px;border-left:3px solid #01a1d1;">
+                    <div style="font-size:12px;color:#888;margin-bottom:8px;">Breakdown:</div>
+                    <div id="analyticsModalBody" style="font-size:14px;color:#ccc;line-height:1.8;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('analyticsModal')">Close</button>
+                <button class="btn-primary" onclick="closeModal('analyticsModal')">View Full Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) { if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active'); });
+
+function animateCounter(el, target, suffix) {
+  var current = 0, step = Math.ceil(target / 60);
+  var interval = setInterval(function() {
+    current += step;
+    if (current >= target) { current = target; clearInterval(interval); }
+    el.textContent = current + (suffix || '');
+  }, 20);
+}
+
+function timeAgo(dateStr) {
+    if (!dateStr) return '';
+    var d = new Date(dateStr), now = new Date(), diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'Just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 2592000) return Math.floor(diff / 86400) + 'd ago';
+    return d.toLocaleDateString();
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function loadDashboardStats() {
+  try {
+    const data = await adminApi.getStats();
+    const stats = data.stats;
+    if (stats) {
+      // Live content counts from stats (single API call)
+      animateCounter(document.getElementById('statPages'), stats.totalPages || 0);
+      animateCounter(document.getElementById('statServices'), stats.totalServices || 0);
+      animateCounter(document.getElementById('statTeam'), stats.totalTeam || 0);
+      animateCounter(document.getElementById('statMessages'), stats.totalMessages || 0);
+    }
+  } catch (e) {
+    console.warn('Stats API unavailable', e);
+    // Fallback placeholders
+    ['statPages','statServices','statTeam','statMessages'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = '—';
+    });
+  }
+
+  // Load recent messages separately
+  try {
+    var rData = await adminApi.getMessages({ limit: 5 });
+    var msgs = rData.messages || [];
+    var container = document.getElementById('recentMessagesList');
+    if (msgs.length === 0) {
+        container.innerHTML = '<div style="padding:24px;text-align:center;color:#555;">No messages yet.</div>';
+    } else {
+        container.innerHTML = '';
+        msgs.slice(0, 5).forEach(function(m) {
+            var initials = (m.name || '?').charAt(0).toUpperCase();
+            var item = document.createElement('div');
+            item.className = 'msg-item' + (m.status === 'unread' ? ' msg-unread' : '');
+            item.style.cursor = 'pointer';
+            item.onclick = function() { window.location.href = 'messages.html'; };
+            var preview = (m.message || '').substring(0, 100);
+            if ((m.message||'').length > 100) preview += '...';
+            item.innerHTML = '<div class="msg-avatar">' + initials + '</div>' +
+                '<div class="msg-content">' +
+                '<div class="msg-name">' + escapeHtml(m.name) + (m.status==='unread'?' <span style="background:#01a1d1;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;">NEW</span>':'') + '</div>' +
+                '<div class="msg-text">' + escapeHtml(preview) + '</div>' +
+                '</div>' +
+                '<div class="msg-time">' + timeAgo(m.createdAt) + '</div>';
+            container.appendChild(item);
+        });
+    }
+  } catch(e) {
+    var container = document.getElementById('recentMessagesList');
+    if (container) container.innerHTML = '<div style="padding:24px;text-align:center;color:#555;">Could not load messages.</div>';
+  }
+}
+
+function showAnalyticsDetail(title, value, change, body) {
+  document.getElementById('analyticsModalTitle').textContent = title;
+  document.getElementById('analyticsModalValue').textContent = value;
+  document.getElementById('analyticsModalLabel').textContent = title;
+  var changeEl = document.getElementById('analyticsModalChange');
+  changeEl.textContent = change;
+  changeEl.style.background = change.indexOf('+') !== -1 ? 'rgba(46,204,113,0.15)' : 'rgba(231,76,60,0.15)';
+  changeEl.style.color = change.indexOf('+') !== -1 ? '#2ecc71' : '#e74c3c';
+  document.getElementById('analyticsModalBody').innerHTML = body;
+  openModal('analyticsModal');
+}
+
+document.addEventListener('DOMContentLoaded', loadDashboardStats);
+</script>
+
+</body>
+</html>

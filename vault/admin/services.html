@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Services — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html" class="active"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Services</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="dashboard.html">Dashboard</a> / <span>Services</span>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h3>All Services</h3>
+                    <button class="btn-primary" onclick="openNewServiceModal()">+ Add Service</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesTableBody">
+                        <tr id="serviceLoadingRow"><td colspan="4" style="text-align:center;padding:32px;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading services...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Service Modal -->
+    <div class="modal-overlay" id="editServiceModal">
+        <div class="modal-box" style="width:560px;">
+            <div class="modal-header">
+                <h3 id="editServiceTitle">Edit Service</h3>
+                <button class="modal-close" onclick="closeModal('editServiceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="serviceName">Service Name</label>
+                <input type="text" id="serviceName">
+                <label for="serviceDesc">Description</label>
+                <textarea id="serviceDesc" style="min-height:80px;"></textarea>
+                <label>Detailed Content</label>
+                <div style="border:1px solid #333;border-radius:8px;overflow:hidden;margin-bottom:16px;">
+                    <div style="display:flex;gap:4px;padding:6px 10px;background:#0d0d0d;border-bottom:1px solid #333;flex-wrap:wrap;">
+                        <button type="button" class="rte-btn" data-rte="bold" style="background:none;border:1px solid transparent;color:#888;padding:2px 8px;border-radius:4px;cursor:pointer;"><i class="fa fa-bold"></i></button>
+                        <button type="button" class="rte-btn" data-rte="italic" style="background:none;border:1px solid transparent;color:#888;padding:2px 8px;border-radius:4px;cursor:pointer;"><i class="fa fa-italic"></i></button>
+                        <button type="button" class="rte-btn" data-rte="insertUnorderedList" style="background:none;border:1px solid transparent;color:#888;padding:2px 8px;border-radius:4px;cursor:pointer;"><i class="fa fa-list-ul"></i></button>
+                        <button type="button" class="rte-btn" data-rte="insertOrderedList" style="background:none;border:1px solid transparent;color:#888;padding:2px 8px;border-radius:4px;cursor:pointer;"><i class="fa fa-list-ol"></i></button>
+                        <button type="button" class="rte-btn" data-rte="image" style="background:none;border:1px solid transparent;color:#888;padding:2px 8px;border-radius:4px;cursor:pointer;"><i class="fa fa-image"></i></button>
+                    </div>
+                    <div id="serviceRichContent" contenteditable="true" style="padding:12px;min-height:100px;background:#111;color:#ccc;font-size:14px;outline:none;line-height:1.6;"></div>
+                </div>
+                <label for="serviceIcon" style="margin-top:4px;display:block;">Icon (Font Awesome class)</label>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input type="text" id="serviceIcon" placeholder="e.g. fa-cogs" style="flex:1;">
+                    <span id="serviceIconPreview" style="font-size:22px;color:#01a1d1;min-width:28px;text-align:center;"><i class="fa fa-cube"></i></span>
+                </div>
+                <div style="font-size:11px;color:#555;margin-top:2px;">Browse icons at <a href="https://fontawesome.com/v5/search" target="_blank" style="color:#01a1d1;">fontawesome.com</a></div>
+                <label for="serviceImage" style="margin-top:12px;display:block;">Image URL / Thumbnail</label>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" id="serviceImage" placeholder="https://... or upload" style="flex:1;">
+                    <button class="btn-sm edit" onclick="document.getElementById('serviceImageUpload').click()" style="white-space:nowrap;">Upload</button>
+                    <input type="file" id="serviceImageUpload" accept="image/*" style="display:none">
+                </div>
+                <label for="serviceStatus" style="margin-top:12px;display:block;">Status</label>
+                <select id="serviceStatus">
+                    <option value="active">Active</option>
+                    <option value="draft">Draft</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('editServiceModal')">Cancel</button>
+                <button class="btn-primary" id="saveServiceBtn" onclick="saveServiceChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteServiceModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Delete Service</h3>
+                <button class="modal-close" onclick="closeModal('deleteServiceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteServiceName">this service</strong>? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('deleteServiceModal')">Cancel</button>
+                <button class="btn-danger" id="confirmDeleteServiceBtn" onclick="confirmDeleteServiceAction()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<style>
+.rte-btn:hover { border-color:#01a1d1 !important; color:#fff !important; }
+.rte-btn.is-active { background:rgba(1,161,209,0.2) !important; color:#01a1d1 !important; }
+</style>
+<script>
+var currentServiceId = null;
+
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+
+// Icon preview live update
+document.addEventListener('DOMContentLoaded', function() {
+    var iconInput = document.getElementById('serviceIcon');
+    if (iconInput) {
+        iconInput.addEventListener('input', function() {
+            var preview = document.getElementById('serviceIconPreview');
+            var cls = this.value.trim();
+            preview.innerHTML = cls ? '<i class="fa ' + cls + '"></i>' : '<i class="fa fa-cube"></i>';
+        });
+    }
+});
+
+// RTE toolbar handlers
+document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.rte-btn');
+    if (!btn) return;
+    var cmd = btn.dataset.rte;
+    if (cmd === 'image') {
+        document.getElementById('serviceImageUpload').click();
+        return;
+    }
+    document.execCommand(cmd, false, null);
+    document.querySelectorAll('.rte-btn').forEach(function(b) {
+        b.classList.toggle('is-active', document.queryCommandState(b.dataset.rte));
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('serviceImageUpload').addEventListener('change', async function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        try {
+            var result = await adminApi.uploadImage(file, 'services');
+            document.getElementById('serviceImage').value = result.url;
+            showToast('Image Uploaded', 'Service image uploaded successfully.', 'success');
+        } catch (err) {
+            showToast('Upload Failed', err.message || 'Could not upload image.', 'error');
+        }
+        e.target.value = '';
+    });
+});
+
+// Load services from API
+async function loadServicesTable() {
+    var tbody = document.getElementById('servicesTableBody');
+    if (!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#555;"><span class="spinner" style="vertical-align:middle;margin-right:8px;"></span> Loading...</td></tr>';
+    try {
+        var data = await adminApi.getServices();
+        var services = data.services || [];
+        tbody.innerHTML = '';
+        if (services.length > 0) {
+            services.forEach(function(s) {
+                var tr = document.createElement('tr');
+                var id = s._id || s.id || '';
+                var iconHtml = s.icon ? '<i class="fa ' + s.icon + '" style="color:#01a1d1;margin-right:6px;"></i>' : '';
+                var imgHtml = s.image ? '<img src="' + s.image + '" style="height:30px;width:30px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">' : '';
+                tr.innerHTML = '<td>' + imgHtml + iconHtml + '<strong>' + (s.title||'') + '</strong></td>' +
+                    '<td><small style="color:#888;">' + (s.shortDescription||s.description||'').substring(0,80) + (((s.shortDescription||s.description||'').length>80)?'...':'') + '</small></td>' +
+                    '<td><span class="status ' + (s.status||'active') + '">' + (s.status==='draft'?'Draft':'Active') + '</span></td>' +
+                    '<td><button class="btn-sm edit" onclick="editService(\'' + id + '\')">Edit</button> ' +
+                    '<button class="btn-sm delete" onclick="confirmDeleteService(\'' + (s.title||'').replace(/'/g,"\\'") + '\',\'' + id + '\')">Delete</button></td>';
+                tbody.appendChild(tr);
+            });
+        } else {
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:40px;color:#555;"><i class="fa fa-inbox" style="font-size:28px;display:block;margin-bottom:12px;"></i>No services yet.<br><button class="btn-primary" style="margin-top:12px;font-size:12px;padding:8px 16px;" onclick="openNewServiceModal()">+ Add First Service</button></td></tr>';
+        }
+        return;
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:#e74c3c;"><i class="fa fa-exclamation-triangle"></i> Failed to load services. Is the API running?</td></tr>';
+        console.warn('Services API error', e);
+    }
+}
+
+async function editServiceFromTitle(title) {
+    currentServiceId = null;
+    document.getElementById('editServiceTitle').textContent = 'Edit: ' + title;
+    document.getElementById('serviceName').value = title;
+    document.getElementById('serviceDesc').value = '';
+    document.getElementById('serviceImage').value = '';
+    document.getElementById('serviceRichContent').innerHTML = '';
+    document.getElementById('serviceStatus').value = 'active';
+    // Try to find by title
+    try {
+        var data = await adminApi.getServices({ title: title });
+        var services = data.services || [];
+        var found = services.find(function(s) { return s.title === title; });
+        if (found) {
+            currentServiceId = found._id || found.id;
+            document.getElementById('serviceName').value = found.title || '';
+            document.getElementById('serviceDesc').value = found.shortDescription || found.description || '';
+            document.getElementById('serviceImage').value = found.image || '';
+            document.getElementById('serviceRichContent').innerHTML = found.content || found.detailedContent || '';
+            document.getElementById('serviceStatus').value = found.status || 'active';
+        }
+    } catch (e) { console.warn('Could not load service by title', e); }
+    openModal('editServiceModal');
+}
+
+function confirmDeleteServiceFromTitle(title) { confirmDeleteService(title, ''); }
+
+async function editService(idOrSlug) {
+    currentServiceId = idOrSlug;
+    document.getElementById('editServiceTitle').textContent = 'Edit Service';
+    document.getElementById('serviceName').value = '';
+    document.getElementById('serviceDesc').value = '';
+    document.getElementById('serviceIcon').value = '';
+    document.getElementById('serviceIconPreview').innerHTML = '<i class="fa fa-cube"></i>';
+    document.getElementById('serviceImage').value = '';
+    document.getElementById('serviceRichContent').innerHTML = '';
+    document.getElementById('serviceStatus').value = 'active';
+    try {
+        var data = await adminApi.getService(idOrSlug);
+        var s = data.service || data;
+        document.getElementById('editServiceTitle').textContent = 'Edit: ' + (s.title||'New Service');
+        document.getElementById('serviceName').value = s.title || '';
+        document.getElementById('serviceDesc').value = s.shortDescription || s.description || '';
+        var icon = s.icon || '';
+        document.getElementById('serviceIcon').value = icon;
+        document.getElementById('serviceIconPreview').innerHTML = icon ? '<i class="fa ' + icon + '"></i>' : '<i class="fa fa-cube"></i>';
+        document.getElementById('serviceImage').value = s.image || '';
+        document.getElementById('serviceRichContent').innerHTML = s.content || s.detailedContent || '';
+        document.getElementById('serviceStatus').value = s.status || 'active';
+    } catch (e) {
+        console.warn('Service load failed', e);
+    }
+    openModal('editServiceModal');
+}
+
+async function saveServiceChanges() {
+    var btn = document.getElementById('saveServiceBtn');
+    var name = document.getElementById('serviceName').value.trim();
+    if (!name) { showToast('Missing Field','Service name is required.','warning'); return; }
+    setLoading(btn, true);
+    var desc = document.getElementById('serviceDesc').value.trim();
+    var icon = document.getElementById('serviceIcon').value.trim();
+    var image = document.getElementById('serviceImage').value.trim();
+    var content = document.getElementById('serviceRichContent').innerHTML;
+    var status = document.getElementById('serviceStatus').value;
+    var payload = {
+        title: name,
+        shortDescription: desc,
+        description: desc,
+        icon: icon || undefined,
+        image: image || undefined,
+        content: content,
+        detailedContent: content,
+        status: status
+    };
+    try {
+        if (currentServiceId) {
+            await adminApi.updateService(currentServiceId, payload);
+            showToast('Changes Saved', 'Service updated successfully.', 'success');
+        } else {
+            await adminApi.createService(payload);
+            showToast('Service Created', '"' + name + '" has been added.', 'success');
+        }
+        closeModal('editServiceModal');
+        loadServicesTable();
+    } catch (e) {
+        showToast('Save Failed', e.message || 'Could not save service.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+function confirmDeleteService(name, id) {
+    document.getElementById('deleteServiceName').textContent = name;
+    document.getElementById('confirmDeleteServiceBtn').dataset.id = id;
+    openModal('deleteServiceModal');
+}
+
+async function confirmDeleteServiceAction() {
+    var btn = document.getElementById('confirmDeleteServiceBtn');
+    var id = btn.dataset.id;
+    setLoading(btn, true, 'Deleting...');
+    try {
+        await adminApi.deleteService(id);
+        showToast('Service Deleted', 'The service has been deleted.', 'error');
+        closeModal('deleteServiceModal');
+        loadServicesTable();
+    } catch (e) {
+        showToast('Delete Failed', e.message || 'Could not delete service.', 'error');
+    }
+    setLoading(btn, false);
+}
+
+function openNewServiceModal() {
+    currentServiceId = null;
+    document.getElementById('editServiceTitle').textContent = 'Add New Service';
+    document.getElementById('serviceName').value = '';
+    document.getElementById('serviceDesc').value = '';
+    document.getElementById('serviceIcon').value = '';
+    document.getElementById('serviceIconPreview').innerHTML = '<i class="fa fa-cube"></i>';
+    document.getElementById('serviceImage').value = '';
+    document.getElementById('serviceRichContent').innerHTML = '';
+    document.getElementById('serviceStatus').value = 'active';
+    openModal('editServiceModal');
+}
+
+document.addEventListener('DOMContentLoaded', loadServicesTable);
+</script>
+
+</body>
+</html>

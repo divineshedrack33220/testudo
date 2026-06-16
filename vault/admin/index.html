@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login — Testudo</title>
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body class="login-body">
+
+    <div class="login-box">
+        <div class="logo">
+            <h2><span>Testudo</span> Admin</h2>
+        </div>
+        <h1>Welcome back</h1>
+        <p>Sign in to manage your website</p>
+        <form>
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="admin@testudong.com" value="admin@testudong.com">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" value="password">
+            <button type="submit" class="btn" onclick="event.preventDefault();(async()=>{var e=document.getElementById('email').value,p=document.getElementById('password').value;try{const res=await adminApi.login({email:e,password:p});sessionStorage.setItem('testudo_admin_session', res.token);window.location.href='dashboard.html';}catch(err){document.getElementById('loginErrorModal').classList.add('active');}})()">Sign In</button>
+        </form>
+        <div style="text-align:center;margin-top:16px;">
+            <a href="#" onclick="event.preventDefault();openModal('forgotModal')" style="color:#01a1d1;font-size:13px;">Forgot password?</a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Forgot Password</h3>
+                <button class="modal-close" onclick="closeModal('forgotModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom:16px;">Enter your email address and we'll send you a link to reset your password.</p>
+                <label for="resetEmail">Email</label>
+                <input type="email" id="resetEmail" placeholder="admin@testudong.com">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('forgotModal')">Cancel</button>
+                <button class="btn-primary" onclick="closeModal('forgotModal');document.getElementById('resetSuccessModal').classList.add('active')">Send Reset Link</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Success Modal -->
+    <div class="modal-overlay" id="resetSuccessModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Email Sent</h3>
+                <button class="modal-close" onclick="closeModal('resetSuccessModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>If an account exists with that email, you will receive a password reset link shortly.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeModal('resetSuccessModal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Error Modal -->
+    <div class="modal-overlay" id="loginErrorModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Invalid Credentials</h3>
+                <button class="modal-close" onclick="closeModal('loginErrorModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>The email or password you entered is incorrect. Please try again.</p>
+                <p style="margin-top:8px;font-size:13px;color:#888;">Hint: Use <strong style="color:#ccc;">admin@testudong.com</strong> / <strong style="color:#ccc;">password</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeModal('loginErrorModal')">Try Again</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="/img/photo/favicon.ico" type="image/x-icon">
+    <title>Settings — Testudo Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <script src="js/admin.js"></script>
+    <script src="admin-api.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <h2><span>Testudo</span> Admin</h2>
+            <small>Content Management</small>
+        </div>
+        <nav>
+            <a href="dashboard.html"><span class="icon"><i class="fa fa-home"></i></span> <span>Dashboard</span></a>
+            <a href="pages.html"><span class="icon"><i class="fa fa-file"></i></span> <span>Pages</span></a>
+            <a href="services.html"><span class="icon"><i class="fa fa-cogs"></i></span> <span>Services</span></a>
+            <a href="team.html"><span class="icon"><i class="fa fa-users"></i></span> <span>Team</span></a>
+            <a href="content.html"><span class="icon"><i class="fa fa-layer-group"></i></span> <span>Content</span></a>
+            <a href="media.html"><span class="icon"><i class="fa fa-image"></i></span> <span>Media</span></a>
+            <a href="messages.html"><span class="icon"><i class="fa fa-envelope"></i></span> <span>Messages</span></a>
+            <a href="settings.html" class="active"><span class="icon"><i class="fa fa-wrench"></i></span> <span>Settings</span></a>
+        </nav>
+        <div class="footer">
+            <a href="#" onclick="event.preventDefault();openModal('logoutModal')" style="color: rgba(255,255,255,0.5); font-size: 13px;"><i class="fa fa-sign-out-alt"></i> Logout</a>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <div class="header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+                <h1>Settings</h1>
+            </div>
+            <div class="user">
+                <span>Admin</span>
+                <div class="avatar">A</div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="breadcrumb">
+                <a href="dashboard.html">Dashboard</a> / <span>Settings</span>
+            </div>
+
+            <!-- General Settings -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-globe" style="color:#01a1d1;margin-right:8px;"></i>General Settings</h3>
+                    <button class="btn-primary" onclick="saveSettings()">Save All Changes</button>
+                </div>
+                <div style="padding:24px;">
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                        <div class="field-group">
+                            <label>Site Name</label>
+                            <input type="text" id="setting_siteName" placeholder="Testudo">
+                        </div>
+                        <div class="field-group">
+                            <label>Tagline</label>
+                            <input type="text" id="setting_tagline" placeholder="Branding & Marketing">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Site Description</label>
+                        <textarea id="setting_siteDescription" placeholder="Brief description of your site for search engines" style="min-height:60px;"></textarea>
+                    </div>
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Logo</label>
+                        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                            <div id="logoPreview" style="width:100px;height:100px;border-radius:8px;border:1px solid #333;display:flex;align-items:center;justify-content:center;background:#0d0d0d;overflow:hidden;">
+                                <img id="logoPreviewImg" src="" style="max-width:100%;max-height:100%;object-fit:contain;display:none;">
+                                <span id="logoPlaceholder" style="font-size:10px;color:#555;">No logo</span>
+                            </div>
+                            <input type="text" id="setting_logo" placeholder="img/photo/logo.png" style="flex:1;min-width:200px;">
+                            <button class="btn-sm edit" onclick="document.getElementById('logoUpload').click()">Upload</button>
+                            <input type="file" id="logoUpload" accept="image/*" style="display:none">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Favicon</label>
+                        <div style="display:flex;gap:8px;">
+                            <input type="text" id="setting_favicon" placeholder="img/photo/icon.png" style="flex:1;">
+                            <button class="btn-sm edit" onclick="document.getElementById('faviconUpload').click()">Upload</button>
+                            <input type="file" id="faviconUpload" accept="image/*" style="display:none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Colors -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-palette" style="color:#9b59b6;margin-right:8px;"></i>Brand Colors</h3>
+                </div>
+                <div style="padding:24px;">
+                    <div class="field-row-3" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+                        <div class="field-group">
+                            <label>Primary Color</label>
+                            <div style="display:flex;gap:8px;">
+                                <input type="color" id="setting_primaryColor" value="#01a1d1" style="width:48px;height:40px;padding:2px;border-radius:6px;background:#0d0d0d;border:1px solid #333;cursor:pointer;">
+                                <input type="text" id="setting_primaryColorText" value="#01a1d1" style="flex:1;">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Secondary Color</label>
+                            <div style="display:flex;gap:8px;">
+                                <input type="color" id="setting_secondaryColor" value="#FF9800" style="width:48px;height:40px;padding:2px;border-radius:6px;background:#0d0d0d;border:1px solid #333;cursor:pointer;">
+                                <input type="text" id="setting_secondaryColorText" value="#FF9800" style="flex:1;">
+                            </div>
+                        </div>
+                        <div class="field-group">
+                            <label>Accent Color</label>
+                            <div style="display:flex;gap:8px;">
+                                <input type="color" id="setting_accentColor" value="#2ecc71" style="width:48px;height:40px;padding:2px;border-radius:6px;background:#0d0d0d;border:1px solid #333;cursor:pointer;">
+                                <input type="text" id="setting_accentColorText" value="#2ecc71" style="flex:1;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-address-book" style="color:#2ecc71;margin-right:8px;"></i>Contact Information</h3>
+                </div>
+                <div style="padding:24px;">
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+                        <div class="field-group">
+                            <label>Email</label>
+                            <input type="email" id="setting_email" placeholder="hello@testudobranding.com">
+                        </div>
+                        <div class="field-group">
+                            <label>Phone</label>
+                            <input type="text" id="setting_phone" placeholder="+1 (555) 123-4567">
+                        </div>
+                    </div>
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label>Address</label>
+                            <input type="text" id="setting_address" placeholder="123 Creative Lane, Design District, NY 10001">
+                        </div>
+                        <div class="field-group">
+                            <label>Office Hours</label>
+                            <input type="text" id="setting_officeHours" placeholder="Mon - Fri: 9:00 AM - 6:00 PM">
+                        </div>
+                    </div>
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Google Maps Embed URL</label>
+                        <input type="text" id="setting_mapsUrl" placeholder="https://www.google.com/maps/embed?pb=...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Links -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-share-alt" style="color:#01a1d1;margin-right:8px;"></i>Social Media Links</h3>
+                </div>
+                <div style="padding:24px;">
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
+                        <div class="field-group">
+                            <label><i class="fab fa-facebook" style="color:#1877F2;"></i> Facebook</label>
+                            <input type="url" id="setting_facebook" placeholder="https://facebook.com/testudo">
+                        </div>
+                        <div class="field-group">
+                            <label><i class="fab fa-twitter" style="color:#1DA1F2;"></i> Twitter / X</label>
+                            <input type="url" id="setting_twitter" placeholder="https://twitter.com/testudo">
+                        </div>
+                    </div>
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
+                        <div class="field-group">
+                            <label><i class="fab fa-instagram" style="color:#E4405F;"></i> Instagram</label>
+                            <input type="url" id="setting_instagram" placeholder="https://instagram.com/testudo">
+                        </div>
+                        <div class="field-group">
+                            <label><i class="fab fa-linkedin" style="color:#0A66C2;"></i> LinkedIn</label>
+                            <input type="url" id="setting_linkedin" placeholder="https://linkedin.com/company/testudo">
+                        </div>
+                    </div>
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="field-group">
+                            <label><i class="fab fa-youtube" style="color:#FF0000;"></i> YouTube</label>
+                            <input type="url" id="setting_youtube" placeholder="https://youtube.com/@testudo">
+                        </div>
+                        <div class="field-group">
+                            <label><i class="fab fa-behance" style="color:#1769FF;"></i> Behance</label>
+                            <input type="url" id="setting_behance" placeholder="https://behance.net/testudo">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO Defaults -->
+            <div class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa fa-search" style="color:#2ecc71;margin-right:8px;"></i>SEO Defaults</h3>
+                </div>
+                <div style="padding:24px;">
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Default Meta Title</label>
+                        <input type="text" id="setting_defaultMetaTitle" placeholder="Testudo - Branding & Marketing Agency">
+                    </div>
+                    <div class="field-group" style="margin-bottom:16px;">
+                        <label>Default Meta Description</label>
+                        <textarea id="setting_defaultMetaDescription" placeholder="Testudo is a creative branding and marketing agency helping businesses..." style="min-height:60px;"></textarea>
+                    </div>
+                    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                        <div class="field-group">
+                            <label>Default OG Title</label>
+                            <input type="text" id="setting_defaultOgTitle" placeholder="Testudo - Branding & Marketing Agency">
+                        </div>
+                        <div class="field-group">
+                            <label>Default OG Image URL</label>
+                            <input type="text" id="setting_defaultOgImage" placeholder="img/photo/logo.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Logout</h3>
+                <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to log out of the admin panel?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
+                <button class="btn-danger" onclick="sessionStorage.removeItem('testudo_admin_session');window.location.href='index.html'">Logout</button>
+            </div>
+        </div>
+    </div>
+
+<style>
+.field-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.field-row-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.field-group label { display:block; font-size:12px; font-weight:600; color:#aaa; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.3px; }
+.field-group input, .field-group textarea, .field-group select { width:100%; padding:10px 14px; border:1px solid #333; border-radius:8px; font-size:14px; outline:none; transition:border 0.2s; background:#111; color:#fff; font-family:'Outfit',sans-serif; }
+.field-group input:focus, .field-group textarea:focus { border-color:#01a1d1; }
+input[type="color"] { cursor:pointer; }
+input[type="color"]::-webkit-color-swatch-wrapper { padding:0; }
+input[type="color"]::-webkit-color-swatch { border:none; border-radius:4px; }
+@media (max-width:768px) { .field-row, .field-row-3 { grid-template-columns:1fr; } }
+</style>
+
+<script>
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('active');
+});
+
+// Sync color pickers with text inputs
+['primaryColor','secondaryColor','accentColor'].forEach(function(key) {
+    var picker = document.getElementById('setting_' + key);
+    var text = document.getElementById('setting_' + key + 'Text');
+    if (picker && text) {
+        picker.addEventListener('input', function() { text.value = this.value; });
+        text.addEventListener('input', function() { if (/^#[0-9a-f]{6}$/i.test(this.value)) picker.value = this.value; });
+    }
+});
+
+// Logo upload
+document.getElementById('logoUpload').addEventListener('change', async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    try {
+        var result = await adminApi.uploadImage(file, 'settings');
+        document.getElementById('setting_logo').value = result.url;
+        updateLogoPreview(result.url);
+        showToast('Logo Uploaded', 'Logo uploaded successfully.', 'success');
+    } catch (err) {
+        showToast('Upload Failed', err.message || 'Could not upload logo.', 'error');
+    }
+    e.target.value = '';
+});
+
+document.getElementById('faviconUpload').addEventListener('change', async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    try {
+        var result = await adminApi.uploadImage(file, 'settings');
+        document.getElementById('setting_favicon').value = result.url;
+        showToast('Favicon Uploaded', 'Favicon uploaded successfully.', 'success');
+    } catch (err) {
+        showToast('Upload Failed', err.message || 'Could not upload favicon.', 'error');
+    }
+    e.target.value = '';
+});
+
+function updateLogoPreview(url) {
+    var img = document.getElementById('logoPreviewImg');
+    var placeholder = document.getElementById('logoPlaceholder');
+    if (url) {
+        img.src = (url.startsWith('http') || url.startsWith('/')) ? url : '../' + url;
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+    } else {
+        img.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+}
+
+document.getElementById('setting_logo').addEventListener('input', function() {
+    updateLogoPreview(this.value);
+});
+
+function collectSettings() {
+    return {
+        siteName: document.getElementById('setting_siteName').value.trim(),
+        tagline: document.getElementById('setting_tagline').value.trim(),
+        siteDescription: document.getElementById('setting_siteDescription').value.trim(),
+        logo: document.getElementById('setting_logo').value.trim(),
+        favicon: document.getElementById('setting_favicon').value.trim(),
+        primaryColor: document.getElementById('setting_primaryColorText').value.trim(),
+        secondaryColor: document.getElementById('setting_secondaryColorText').value.trim(),
+        accentColor: document.getElementById('setting_accentColorText').value.trim(),
+        contactEmail: document.getElementById('setting_email').value.trim(),
+        contactPhone: document.getElementById('setting_phone').value.trim(),
+        contactAddress: document.getElementById('setting_address').value.trim(),
+        officeHours: document.getElementById('setting_officeHours') ? document.getElementById('setting_officeHours').value.trim() : '',
+        mapsUrl: document.getElementById('setting_mapsUrl').value.trim(),
+        social: {
+            facebook: document.getElementById('setting_facebook').value.trim(),
+            twitter: document.getElementById('setting_twitter').value.trim(),
+            instagram: document.getElementById('setting_instagram').value.trim(),
+            linkedin: document.getElementById('setting_linkedin').value.trim(),
+            youtube: document.getElementById('setting_youtube').value.trim(),
+            behance: document.getElementById('setting_behance').value.trim()
+        },
+        seo: {
+            metaTitle: document.getElementById('setting_defaultMetaTitle').value.trim(),
+            metaDescription: document.getElementById('setting_defaultMetaDescription').value.trim(),
+            ogTitle: document.getElementById('setting_defaultOgTitle').value.trim(),
+            ogImage: document.getElementById('setting_defaultOgImage').value.trim()
+        }
+    };
+}
+
+function populateSettings(data) {
+    if (!data) return;
+    function setVal(id, val) {
+        var el = document.getElementById(id);
+        if (el && val !== undefined && val !== null) el.value = val;
+    }
+    setVal('setting_siteName', data.siteName);
+    setVal('setting_tagline', data.tagline);
+    setVal('setting_siteDescription', data.siteDescription);
+    setVal('setting_logo', data.logo);
+    setVal('setting_favicon', data.favicon);
+    setVal('setting_primaryColorText', data.primaryColor || '#01a1d1');
+    setVal('setting_secondaryColorText', data.secondaryColor || '#FF9800');
+    setVal('setting_accentColorText', data.accentColor || '#2ecc71');
+    if (data.primaryColor) document.getElementById('setting_primaryColor').value = data.primaryColor;
+    if (data.secondaryColor) document.getElementById('setting_secondaryColor').value = data.secondaryColor;
+    if (data.accentColor) document.getElementById('setting_accentColor').value = data.accentColor;
+    // Map backend field names → input IDs
+    setVal('setting_email', data.contactEmail || data.email);
+    setVal('setting_phone', data.contactPhone || data.phone);
+    setVal('setting_address', data.contactAddress || data.address);
+    if (document.getElementById('setting_officeHours')) setVal('setting_officeHours', data.officeHours);
+    setVal('setting_mapsUrl', data.mapsUrl);
+    var social = data.social || {};
+    setVal('setting_facebook', social.facebook);
+    setVal('setting_twitter', social.twitter);
+    setVal('setting_instagram', social.instagram);
+    setVal('setting_linkedin', social.linkedin);
+    setVal('setting_youtube', social.youtube);
+    setVal('setting_behance', social.behance);
+    var seo = data.seo || {};
+    setVal('setting_defaultMetaTitle', seo.metaTitle);
+    setVal('setting_defaultMetaDescription', seo.metaDescription);
+    setVal('setting_defaultOgTitle', seo.ogTitle);
+    setVal('setting_defaultOgImage', seo.ogImage);
+    updateLogoPreview(data.logo);
+}
+
+async function saveSettings() {
+    var payload = collectSettings();
+    document.querySelector('.btn-primary').textContent = 'Saving...';
+    document.querySelector('.btn-primary').disabled = true;
+    try {
+        await adminApi.updateSettings(payload);
+        showToast('Settings Saved', 'All settings have been saved successfully.', 'success');
+    } catch (err) {
+        // Fallback: save to localStorage if API fails
+        try {
+            localStorage.setItem('testudo_settings', JSON.stringify(payload));
+            showToast('Saved Locally', 'Settings saved to local storage (API unavailable).', 'info');
+        } catch (e2) {
+            showToast('Save Failed', err.message || 'Could not save settings.', 'error');
+        }
+    }
+    document.querySelector('.btn-primary').textContent = 'Save All Changes';
+    document.querySelector('.btn-primary').disabled = false;
+}
+
+async function loadSettings() {
+    try {
+        var data = await adminApi.getSettings();
+        var settings = data.settings || data;
+        if (settings && Object.keys(settings).length > 0) {
+            populateSettings(settings);
+            return;
+        }
+    } catch (e) { console.warn('Settings API unavailable', e); }
+    // Fallback: try localStorage
+    try {
+        var stored = localStorage.getItem('testudo_settings');
+        if (stored) {
+            populateSettings(JSON.parse(stored));
+            return;
+        }
+    } catch (e) {}
+    // Set defaults
+    populateSettings({
+        siteName: 'Testudo',
+        tagline: 'Branding & Marketing',
+        primaryColor: '#01a1d1',
+        secondaryColor: '#FF9800',
+        accentColor: '#2ecc71',
+        email: 'hello@testudobranding.com',
+        phone: '+1 (555) 123-4567',
+        address: '123 Creative Lane, Design District, NY 10001',
+        logo: 'img/photo/logo.png'
+    });
+}
+
+document.addEventListener('DOMContentLoaded', loadSettings);
+</script>
+
+</body>
+</html>
